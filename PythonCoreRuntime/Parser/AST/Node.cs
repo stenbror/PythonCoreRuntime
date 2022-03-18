@@ -15,6 +15,14 @@ public record StringExpressionNode(int StartPosition, int EndPosition, Immutable
 
 public record AtomExpressionNode(int StartPosition, int EndPosition, Token? Await, ExpressionNode Left, ImmutableArray<ExpressionNode> Trailers) 
     : ExpressionNode(StartPosition, EndPosition);
+public record PowerExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record UnaryPlusExpressionNode(int StartPosition, int EndPosition, Token Symbol, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record UnaryMinusExpressionNode(int StartPosition, int EndPosition, Token Symbol, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record UnaryBitInverExpressionNode(int StartPosition, int EndPosition, Token Symbol, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
 
 
 
