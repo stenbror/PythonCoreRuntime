@@ -71,6 +71,11 @@ public record ComparisonIsNotExpressionNode(int StartPosition, int EndPosition, 
     : ExpressionNode(StartPosition, EndPosition);
 public record NotTestExpressionNode(int StartPosition, int EndPosition, Token Symbol, ExpressionNode Right) 
     : ExpressionNode(StartPosition, EndPosition);
+public record AndTestExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record OrTestExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
+
 
 public record StatementNode(int StartPosition, int EndPosition) : Node(StartPosition, EndPosition);
 public record EmptyStatementNode() : ExpressionNode(-1, -1);

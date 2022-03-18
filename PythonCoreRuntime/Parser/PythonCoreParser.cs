@@ -429,6 +429,10 @@ public class PythonCoreParser
         return left;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     private ExpressionNode ParseNotTest()
     {
         var start = _tokenizer.CurPosition;
@@ -442,6 +446,46 @@ public class PythonCoreParser
         }
 
         return ParseComparison();
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    private ExpressionNode ParseAndTest()
+    {
+        var start = _tokenizer.CurPosition;
+        var left = ParseNotTest();
+
+        while (_tokenizer.CurSymbol.Code == TokenCode.PyAnd)
+        {
+            var symbol = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+            var right = ParseNotTest();
+            left = new AndTestExpressionNode(start, _tokenizer.CurPosition, left, symbol, right);
+        }
+        
+        return left;
+    }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    private ExpressionNode ParseOrTest()
+    {
+        var start = _tokenizer.CurPosition;
+        var left = ParseAndTest();
+
+        while (_tokenizer.CurSymbol.Code == TokenCode.PyOr)
+        {
+            var symbol = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+            var right = ParseAndTest();
+            left = new OrTestExpressionNode(start, _tokenizer.CurPosition, left, symbol, right);
+        }
+        
+        return left;
     }
 
 
