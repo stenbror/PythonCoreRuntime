@@ -77,6 +77,8 @@ public record OrTestExpressionNode(int StartPosition, int EndPosition, Expressio
     : ExpressionNode(StartPosition, EndPosition);
 
 
+public record TestExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol1, ExpressionNode Right, Token Symbol2, ExpressionNode Next)
+    : ExpressionNode(StartPosition, EndPosition);
 public record NamedExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
     : ExpressionNode(StartPosition, EndPosition);
 

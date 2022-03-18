@@ -493,9 +493,31 @@ public class PythonCoreParser
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="isCond"></param>
+    /// <returns></returns>
     private ExpressionNode ParseTest(bool isCond)
     {
-        throw new NotImplementedException();
+        if (_tokenizer.CurSymbol.Code == TokenCode.PyLambda) return ParseLambda(isCond);
+        if (!isCond) return ParseOrTest();
+        var start = _tokenizer.CurPosition;
+        var left = ParseOrTest();
+        if (_tokenizer.CurSymbol.Code != TokenCode.PyIf)
+        {
+            var symbol1 = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+            var right = ParseOrTest();
+            if (_tokenizer.CurSymbol.Code != TokenCode.PyElse) throw new SyntaxError("Expecting 'else' in test expression!", _tokenizer.CurPosition);
+            var symbol2 = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+            var next = ParseTest(true);
+
+            return new TestExpressionNode(start, _tokenizer.CurPosition, left, symbol1, right, symbol2, next);
+        }
+
+        return left;
     }
 
     /// <summary>
