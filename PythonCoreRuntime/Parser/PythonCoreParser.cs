@@ -267,6 +267,22 @@ public class PythonCoreParser
         return left;
     }
 
+    private ExpressionNode ParseBitwiseAnd()
+    {
+        var start = _tokenizer.CurPosition;
+        var left = ParseShift();
+
+        while (_tokenizer.CurSymbol.Code == TokenCode.PyBitAnd)
+        {
+            var symbol = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+            var right = ParseShift();
+            left = new BitwiseAndExpressionNode(start, _tokenizer.CurPosition, left, symbol, right);
+        }
+        
+        return left;
+    }
+
 
 
     private ExpressionNode ParseTrailer()

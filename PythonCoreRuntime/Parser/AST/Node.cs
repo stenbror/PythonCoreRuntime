@@ -41,7 +41,12 @@ public record ShiftLeftExpressionNode(int StartPosition, int EndPosition, Expres
     : ExpressionNode(StartPosition, EndPosition);
 public record ShiftRightExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
     : ExpressionNode(StartPosition, EndPosition);
-
+public record BitwiseAndExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record BitwiseXorExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record BitwiseOrExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
 
 
 public record StatementNode(int StartPosition, int EndPosition) : Node(StartPosition, EndPosition);
