@@ -13,5 +13,11 @@ public record NameExpressionNode(int StartPosition, int EndPosition, Token Symbo
 public record NumberExpressionNode(int StartPosition, int EndPosition, Token Symbol) : ExpressionNode(StartPosition, EndPosition);
 public record StringExpressionNode(int StartPosition, int EndPosition, ImmutableArray<Token> Symbols) : ExpressionNode(StartPosition, EndPosition);
 
+public record AtomExpressionNode(int StartPosition, int EndPosition, Token? Await, ExpressionNode Left, ImmutableArray<ExpressionNode> Trailers) 
+    : ExpressionNode(StartPosition, EndPosition);
+
+
+
+
 public record StatementNode(int StartPosition, int EndPosition) : Node(StartPosition, EndPosition);
 public record EmptyStatementNode() : ExpressionNode(-1, -1);

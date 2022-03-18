@@ -68,6 +68,44 @@ public class PythonCoreParser
                 throw new SyntaxError("Illegal literal found in source!", _tokenizer.CurPosition);
         }
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    private ExpressionNode ParseAtomExpr()
+    {
+        var start = _tokenizer.CurPosition;
+        var symbol = _tokenizer.CurSymbol.Code == TokenCode.PyAwait ? _tokenizer.CurSymbol : null;
+        if (symbol != null) _tokenizer.Advance();
+        var left = ParseAtom();
+
+        if (_tokenizer.CurSymbol.Code == TokenCode.PyDot ||
+            _tokenizer.CurSymbol.Code == TokenCode.PyLeftParen ||
+            _tokenizer.CurSymbol.Code == TokenCode.PyLeftBracket)
+        {
+            var elements = new List<ExpressionNode>();
+            while (_tokenizer.CurSymbol.Code == TokenCode.PyDot ||
+                   _tokenizer.CurSymbol.Code == TokenCode.PyLeftParen ||
+                   _tokenizer.CurSymbol.Code == TokenCode.PyLeftBracket)
+            {
+                elements.Add(ParseTrailer());
+            }
+
+            return new AtomExpressionNode(start, _tokenizer.CurPosition, symbol, left, elements.ToImmutableArray());
+        }
+
+        return symbol == null
+            ? left
+            : new AtomExpressionNode(start, _tokenizer.CurPosition, symbol, left, ImmutableArray<ExpressionNode>.Empty);
+    }
+
+
+
+    private ExpressionNode ParseTrailer()
+    {
+        throw new NotImplementedException();
+    }
     
     #endregion
 }
