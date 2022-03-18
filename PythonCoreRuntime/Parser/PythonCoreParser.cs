@@ -341,6 +341,94 @@ public class PythonCoreParser
         return new StarExpressionNode(start, _tokenizer.CurPosition, symbol, right);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    private ExpressionNode ParseComparison()
+    {
+        var start = _tokenizer.CurPosition;
+        var left = ParseBitwiseOr();
+        var symbol = _tokenizer.CurSymbol;
+
+        while (symbol.Code == TokenCode.PyLess || 
+               symbol.Code == TokenCode.PyLessEqual || 
+               symbol.Code == TokenCode.PyEqual || 
+               symbol.Code == TokenCode.PyGreater || 
+               symbol.Code == TokenCode.PyGreaterEqual ||
+               symbol.Code == TokenCode.PyNotEqual ||
+               symbol.Code == TokenCode.PyNot ||
+               symbol.Code == TokenCode.PyIn ||
+               symbol.Code == TokenCode.PyIs)
+        {
+            switch (symbol.Code)
+            {
+                case TokenCode.PyLess:
+                    _tokenizer.Advance();
+                    var right1 = ParseBitwiseOr();
+                    left = new ComparisonLessExpressionNode(start, _tokenizer.CurPosition, left, symbol, right1);
+                    break;
+                case TokenCode.PyLessEqual:
+                    _tokenizer.Advance();
+                    var right2 = ParseBitwiseOr();
+                    left = new ComparisonLessEqualExpressionNode(start, _tokenizer.CurPosition, left, symbol, right2);
+                    break;
+                case TokenCode.PyEqual:
+                    _tokenizer.Advance();
+                    var right3 = ParseBitwiseOr();
+                    left = new ComparisonEqualExpressionNode(start, _tokenizer.CurPosition, left, symbol, right3);
+                    break;
+                case TokenCode.PyGreater:
+                    _tokenizer.Advance();
+                    var right4 = ParseBitwiseOr();
+                    left = new ComparisonGreaterExpressionNode(start, _tokenizer.CurPosition, left, symbol, right4);
+                    break;
+                case TokenCode.PyGreaterEqual:
+                    _tokenizer.Advance();
+                    var right5 = ParseBitwiseOr();
+                    left = new ComparisonGreaterEqualExpressionNode(start, _tokenizer.CurPosition, left, symbol, right5);
+                    break;
+                case TokenCode.PyNotEqual:
+                    _tokenizer.Advance();
+                    var right6 = ParseBitwiseOr();
+                    left = new ComparisonNotEqualExpressionNode(start, _tokenizer.CurPosition, left, symbol, right6);
+                    break;
+                case TokenCode.PyNot:
+                    _tokenizer.Advance();
+                    if (_tokenizer.CurSymbol.Code != TokenCode.PyIn) throw new SyntaxError("Expecting 'in' after 'not' in comparison!", _tokenizer.CurPosition);
+                    var symbol2 = _tokenizer.CurSymbol;
+                    _tokenizer.Advance();
+                    var right7 = ParseBitwiseOr();
+                    left = new ComparisonNotInExpressionNode(start, _tokenizer.CurPosition, left, symbol, symbol2, right7);
+                    break;
+                case TokenCode.PyIn:
+                    _tokenizer.Advance();
+                    var right8 = ParseBitwiseOr();
+                    left = new ComparisonInExpressionNode(start, _tokenizer.CurPosition, left, symbol, right8);
+                    break;
+                case TokenCode.PyIs:
+                    _tokenizer.Advance();
+                    if (_tokenizer.CurSymbol.Code == TokenCode.PyNot)
+                    {
+                        var symbol3 = _tokenizer.CurSymbol;
+                        _tokenizer.Advance();
+                        var right9 = ParseBitwiseOr();
+                        left = new ComparisonIsNotExpressionNode(start, _tokenizer.CurPosition, left, symbol, symbol3, right9);
+                    }
+                    else
+                    {
+                        var right9 = ParseBitwiseOr();
+                        left = new MatriceExpressionNode(start, _tokenizer.CurPosition, left, symbol, right9);
+                    }
+                    break;
+            }
+
+            symbol = _tokenizer.CurSymbol;
+        }
+        
+        return left;
+    }
+
 
 
     private ExpressionNode ParseTrailer()

@@ -49,7 +49,26 @@ public record BitwiseOrExpressionNode(int StartPosition, int EndPosition, Expres
     : ExpressionNode(StartPosition, EndPosition);
 public record StarExpressionNode(int StartPosition, int EndPosition, Token Symbol, ExpressionNode Right) 
     : ExpressionNode(StartPosition, EndPosition);
-
+public record ComparisonLessExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record ComparisonLessEqualExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record ComparisonEqualExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record ComparisonNotEqualExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record ComparisonGreaterEqualExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record ComparisonGreaterExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record ComparisonNotInExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol1, Token Symbol2, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record ComparisonInExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record ComparisonIsExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record ComparisonIsNotExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol1, Token Symbol2, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
 
 public record StatementNode(int StartPosition, int EndPosition) : Node(StartPosition, EndPosition);
 public record EmptyStatementNode() : ExpressionNode(-1, -1);
