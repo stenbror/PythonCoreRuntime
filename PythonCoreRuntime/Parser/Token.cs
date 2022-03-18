@@ -58,6 +58,7 @@ public enum TokenCode
     PyBitXor,
     PyBitInvert,
     PyColonAssign,
+    PyColon,
     PyLess,
     PyGreater,
     PyLessEqual,

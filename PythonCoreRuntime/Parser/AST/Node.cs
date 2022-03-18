@@ -75,8 +75,9 @@ public record AndTestExpressionNode(int StartPosition, int EndPosition, Expressi
     : ExpressionNode(StartPosition, EndPosition);
 public record OrTestExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
     : ExpressionNode(StartPosition, EndPosition);
-
-
+public record LambdaExpressionNode(int StartPosition, int EndPosition, bool Conditional, Token Symbol1,
+        ExpressionNode? Left, Token Symbol2, ExpressionNode Right)
+    : ExpressionNode(StartPosition, EndPosition);
 public record TestExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol1, ExpressionNode Right, Token Symbol2, ExpressionNode Next)
     : ExpressionNode(StartPosition, EndPosition);
 public record NamedExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 

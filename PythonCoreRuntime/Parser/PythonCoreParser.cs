@@ -488,9 +488,24 @@ public class PythonCoreParser
         return left;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="isCond"></param>
+    /// <returns></returns>
     private ExpressionNode ParseLambda(bool isCond)
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var symbol1 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        var left = _tokenizer.CurSymbol.Code == TokenCode.PyColon ? null : ParseVarArgsList();
+        if (_tokenizer.CurSymbol.Code != TokenCode.PyColon) 
+            throw new SyntaxError("Expecting ':' in 'lambda' expression!", _tokenizer.CurPosition);
+        var symbol2 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        var right = ParseTest(isCond);
+
+        return new LambdaExpressionNode(start, _tokenizer.CurPosition, isCond, symbol1, left, symbol2, right);
     }
 
     /// <summary>
@@ -543,6 +558,13 @@ public class PythonCoreParser
 
 
     private ExpressionNode ParseTrailer()
+    {
+        throw new NotImplementedException();
+    }
+    
+    
+    
+    private ExpressionNode ParseVarArgsList()
     {
         throw new NotImplementedException();
     }
