@@ -143,7 +143,7 @@ public class PythonCoreParser
             case TokenCode.PyBitInvert:
                 _tokenizer.Advance();
                 var right3 = ParseFactor();
-                return new UnaryBitInverExpressionNode(start, _tokenizer.CurPosition, symbol, right3);
+                return new UnaryBitInvertExpressionNode(start, _tokenizer.CurPosition, symbol, right3);
                 
             default:
                 return ParsePower();
@@ -427,6 +427,21 @@ public class PythonCoreParser
         }
         
         return left;
+    }
+
+    private ExpressionNode ParseNotTest()
+    {
+        var start = _tokenizer.CurPosition;
+        if (_tokenizer.CurSymbol.Code == TokenCode.PyNot)
+        {
+            var symbol = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+            var right = ParseNotTest();
+
+            return new NotTestExpressionNode(start, _tokenizer.CurPosition, symbol, right);
+        }
+
+        return ParseComparison();
     }
 
 

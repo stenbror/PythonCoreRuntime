@@ -21,7 +21,7 @@ public record UnaryPlusExpressionNode(int StartPosition, int EndPosition, Token 
     : ExpressionNode(StartPosition, EndPosition);
 public record UnaryMinusExpressionNode(int StartPosition, int EndPosition, Token Symbol, ExpressionNode Right) 
     : ExpressionNode(StartPosition, EndPosition);
-public record UnaryBitInverExpressionNode(int StartPosition, int EndPosition, Token Symbol, ExpressionNode Right) 
+public record UnaryBitInvertExpressionNode(int StartPosition, int EndPosition, Token Symbol, ExpressionNode Right) 
     : ExpressionNode(StartPosition, EndPosition);
 public record MulExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
     : ExpressionNode(StartPosition, EndPosition);
@@ -68,6 +68,8 @@ public record ComparisonInExpressionNode(int StartPosition, int EndPosition, Exp
 public record ComparisonIsExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
     : ExpressionNode(StartPosition, EndPosition);
 public record ComparisonIsNotExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol1, Token Symbol2, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record NotTestExpressionNode(int StartPosition, int EndPosition, Token Symbol, ExpressionNode Right) 
     : ExpressionNode(StartPosition, EndPosition);
 
 public record StatementNode(int StartPosition, int EndPosition) : Node(StartPosition, EndPosition);
