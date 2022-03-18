@@ -488,6 +488,36 @@ public class PythonCoreParser
         return left;
     }
 
+    private ExpressionNode ParseLambda(bool isCond)
+    {
+        throw new NotImplementedException();
+    }
+
+    private ExpressionNode ParseTest(bool isCond)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    private ExpressionNode ParseNamedExpr()
+    {
+        var start = _tokenizer.CurPosition;
+        var left = ParseTest(true);
+        if (_tokenizer.CurSymbol.Code == TokenCode.PyColonAssign)
+        {
+            var symbol = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+            var right = ParseTest(true);
+
+            return new NamedExpressionNode(start, _tokenizer.CurPosition, left, symbol, right);
+        }
+        
+        return left;
+    }
+
 
 
     private ExpressionNode ParseTrailer()
