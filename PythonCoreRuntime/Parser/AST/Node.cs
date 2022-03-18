@@ -23,6 +23,16 @@ public record UnaryMinusExpressionNode(int StartPosition, int EndPosition, Token
     : ExpressionNode(StartPosition, EndPosition);
 public record UnaryBitInverExpressionNode(int StartPosition, int EndPosition, Token Symbol, ExpressionNode Right) 
     : ExpressionNode(StartPosition, EndPosition);
+public record MulExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record DivExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record FloorDivExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record ModuloExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record MatriceExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
 
 
 

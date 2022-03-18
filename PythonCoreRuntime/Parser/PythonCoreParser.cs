@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Xml;
 using PythonCoreRuntime.Parser.AST;
 
 namespace PythonCoreRuntime.Parser;
@@ -147,6 +148,57 @@ public class PythonCoreParser
             default:
                 return ParsePower();
         }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    private ExpressionNode ParseTerm()
+    {
+        var start = _tokenizer.CurPosition;
+        var left = ParseFactor();
+        var symbol = _tokenizer.CurSymbol;
+
+        while (symbol.Code == TokenCode.PyMul || 
+               symbol.Code == TokenCode.PyDiv || 
+               symbol.Code == TokenCode.PyFloorDiv || 
+               symbol.Code == TokenCode.PyModulo || 
+               symbol.Code == TokenCode.PyMatrice)
+        {
+            switch (symbol.Code)
+            {
+                case TokenCode.PyMul:
+                    _tokenizer.Advance();
+                    var right1 = ParseFactor();
+                    left = new MulExpressionNode(start, _tokenizer.CurPosition, left, symbol, right1);
+                    break;
+                case TokenCode.PyDiv:
+                    _tokenizer.Advance();
+                    var right2 = ParseFactor();
+                    left = new DivExpressionNode(start, _tokenizer.CurPosition, left, symbol, right2);
+                    break;
+                case TokenCode.PyFloorDiv:
+                    _tokenizer.Advance();
+                    var right3 = ParseFactor();
+                    left = new FloorDivExpressionNode(start, _tokenizer.CurPosition, left, symbol, right3);
+                    break;
+                case TokenCode.PyModulo:
+                    _tokenizer.Advance();
+                    var right4 = ParseFactor();
+                    left = new ModuloExpressionNode(start, _tokenizer.CurPosition, left, symbol, right4);
+                    break;
+                case TokenCode.PyMatrice:
+                    _tokenizer.Advance();
+                    var right5 = ParseFactor();
+                    left = new MatriceExpressionNode(start, _tokenizer.CurPosition, left, symbol, right5);
+                    break;
+            }
+
+            symbol = _tokenizer.CurSymbol;
+        }
+
+        return left;
     }
 
 
