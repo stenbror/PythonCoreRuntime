@@ -234,6 +234,39 @@ public class PythonCoreParser
         return left;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    private ExpressionNode ParseShift()
+    {
+        var start = _tokenizer.CurPosition;
+        var left = ParseArith();
+        var symbol = _tokenizer.CurSymbol;
+
+        while (symbol.Code == TokenCode.PyShiftLeft || 
+               symbol.Code == TokenCode.PyShiftRight )
+        {
+            switch (symbol.Code)
+            {
+                case TokenCode.PyShiftLeft:
+                    _tokenizer.Advance();
+                    var right1 = ParseArith();
+                    left = new ShiftLeftExpressionNode(start, _tokenizer.CurPosition, left, symbol, right1);
+                    break;
+                case TokenCode.PyShiftRight:
+                    _tokenizer.Advance();
+                    var right2 = ParseArith();
+                    left = new ShiftRightExpressionNode(start, _tokenizer.CurPosition, left, symbol, right2);
+                    break;
+            }
+
+            symbol = _tokenizer.CurSymbol;
+        }
+
+        return left;
+    }
+
 
 
     private ExpressionNode ParseTrailer()
