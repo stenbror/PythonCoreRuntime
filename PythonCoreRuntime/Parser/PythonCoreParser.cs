@@ -267,6 +267,10 @@ public class PythonCoreParser
         return left;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     private ExpressionNode ParseBitwiseAnd()
     {
         var start = _tokenizer.CurPosition;
@@ -278,6 +282,26 @@ public class PythonCoreParser
             _tokenizer.Advance();
             var right = ParseShift();
             left = new BitwiseAndExpressionNode(start, _tokenizer.CurPosition, left, symbol, right);
+        }
+        
+        return left;
+    }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    private ExpressionNode ParseBitwiseXor()
+    {
+        var start = _tokenizer.CurPosition;
+        var left = ParseBitwiseAnd();
+
+        while (_tokenizer.CurSymbol.Code == TokenCode.PyBitXor)
+        {
+            var symbol = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+            var right = ParseBitwiseAnd();
+            left = new BitwiseXorExpressionNode(start, _tokenizer.CurPosition, left, symbol, right);
         }
         
         return left;
