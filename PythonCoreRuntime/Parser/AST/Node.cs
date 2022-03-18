@@ -33,7 +33,14 @@ public record ModuloExpressionNode(int StartPosition, int EndPosition, Expressio
     : ExpressionNode(StartPosition, EndPosition);
 public record MatriceExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
     : ExpressionNode(StartPosition, EndPosition);
-
+public record PlusExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record MinusExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record ShiftLeftExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record ShiftRightExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
 
 
 

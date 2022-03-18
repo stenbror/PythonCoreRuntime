@@ -201,6 +201,39 @@ public class PythonCoreParser
         return left;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    private ExpressionNode ParseArith()
+    {
+        var start = _tokenizer.CurPosition;
+        var left = ParseTerm();
+        var symbol = _tokenizer.CurSymbol;
+
+        while (symbol.Code == TokenCode.PyPlus || 
+               symbol.Code == TokenCode.PyMinus )
+        {
+            switch (symbol.Code)
+            {
+                case TokenCode.PyPlus:
+                    _tokenizer.Advance();
+                    var right1 = ParseTerm();
+                    left = new PlusExpressionNode(start, _tokenizer.CurPosition, left, symbol, right1);
+                    break;
+                case TokenCode.PyMinus:
+                    _tokenizer.Advance();
+                    var right2 = ParseTerm();
+                    left = new MinusExpressionNode(start, _tokenizer.CurPosition, left, symbol, right2);
+                    break;
+            }
+
+            symbol = _tokenizer.CurSymbol;
+        }
+
+        return left;
+    }
+
 
 
     private ExpressionNode ParseTrailer()
