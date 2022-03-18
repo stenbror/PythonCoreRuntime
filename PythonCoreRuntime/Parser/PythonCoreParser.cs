@@ -306,6 +306,40 @@ public class PythonCoreParser
         
         return left;
     }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    private ExpressionNode ParseBitwiseOr()
+    {
+        var start = _tokenizer.CurPosition;
+        var left = ParseBitwiseXor();
+
+        while (_tokenizer.CurSymbol.Code == TokenCode.PyBitOr)
+        {
+            var symbol = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+            var right = ParseBitwiseXor();
+            left = new BitwiseOrExpressionNode(start, _tokenizer.CurPosition, left, symbol, right);
+        }
+        
+        return left;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    private ExpressionNode ParseStarExpr()
+    {
+        var start = _tokenizer.CurPosition;
+        var symbol = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        var right = ParseBitwiseOr();
+
+        return new StarExpressionNode(start, _tokenizer.CurPosition, symbol, right);
+    }
 
 
 

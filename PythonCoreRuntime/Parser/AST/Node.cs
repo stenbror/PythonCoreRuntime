@@ -47,6 +47,8 @@ public record BitwiseXorExpressionNode(int StartPosition, int EndPosition, Expre
     : ExpressionNode(StartPosition, EndPosition);
 public record BitwiseOrExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
     : ExpressionNode(StartPosition, EndPosition);
+public record StarExpressionNode(int StartPosition, int EndPosition, Token Symbol, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
 
 
 public record StatementNode(int StartPosition, int EndPosition) : Node(StartPosition, EndPosition);
