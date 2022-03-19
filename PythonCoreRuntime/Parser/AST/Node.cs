@@ -101,6 +101,14 @@ public record CallExpressionNode(int StartPosition, int EndPosition, Token Symbo
     : ExpressionNode(StartPosition, EndPosition);
 public record IndexExpressionNode(int StartPosition, int EndPosition, Token Symbol1, ExpressionNode? Right, Token Symbol2) 
     : ExpressionNode(StartPosition, EndPosition);
+public record SubscriptListExpressionNode(int StartPosition, int EndPosition, ImmutableArray<ExpressionNode> Nodes, ImmutableArray<Token> Separatrors) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record SubscriptExpressionNode(int StartPosition, int EndPosition, 
+        ExpressionNode? Left, Token? Symbol1, ExpressionNode? Right, Token? Symbol2, ExpressionNode? Next) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record ExprListExpressionNode(int StartPosition, int EndPosition, ImmutableArray<ExpressionNode> Nodes, ImmutableArray<Token> Separatrors) 
+    : ExpressionNode(StartPosition, EndPosition);
+
 
 
 public record StatementNode(int StartPosition, int EndPosition) : Node(StartPosition, EndPosition);

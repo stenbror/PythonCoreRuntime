@@ -683,14 +683,65 @@ public class PythonCoreParser
         }
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     private ExpressionNode ParseSubscriptList()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var firstNode = ParseSubscript();
+
+        if (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+        {
+            var nodes = new List<ExpressionNode>();
+            var separators = new List<Token>();
+            nodes.Add(firstNode);
+
+            while (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+            {
+                separators.Add(_tokenizer.CurSymbol);
+                _tokenizer.Advance();
+                if (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+                    throw new SyntaxError("Unexpected ',' in subscript list!", _tokenizer.CurPosition);
+                if (_tokenizer.CurSymbol.Code == TokenCode.PyRightBracket) break;
+                nodes.Add(ParseSubscript());
+            }
+
+            return new SubscriptListExpressionNode(start, _tokenizer.CurPosition, nodes.ToImmutableArray(), 
+                separators.ToImmutableArray());
+        }
+
+        return firstNode;
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     private ExpressionNode ParseSubscript()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        ExpressionNode? left = null, right = null, next = null;
+        Token? symbol1 = null, symbol2 = null;
+        if (_tokenizer.CurSymbol.Code != TokenCode.PyColon) left = ParseTest(true);
+        if (_tokenizer.CurSymbol.Code == TokenCode.PyColon)
+        {
+            symbol1 = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+            if (_tokenizer.CurSymbol.Code != TokenCode.PyColon &&
+                _tokenizer.CurSymbol.Code != TokenCode.PyComma &&
+                _tokenizer.CurSymbol.Code != TokenCode.PyRightBracket) right = ParseTest(true);
+            if (_tokenizer.CurSymbol.Code == TokenCode.PyColon)
+            {
+                symbol2 = _tokenizer.CurSymbol;
+                _tokenizer.Advance();
+                if (_tokenizer.CurSymbol.Code != TokenCode.PyComma &&
+                    _tokenizer.CurSymbol.Code != TokenCode.PyRightBracket) next = ParseTest(true);
+            }
+        }
+
+        return new SubscriptExpressionNode(start, _tokenizer.CurPosition, left, symbol1, right, symbol2, next);
     }
     
     private ExpressionNode ParseExprList()
