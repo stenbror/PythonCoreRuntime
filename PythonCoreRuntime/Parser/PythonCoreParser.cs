@@ -744,9 +744,36 @@ public class PythonCoreParser
         return new SubscriptExpressionNode(start, _tokenizer.CurPosition, left, symbol1, right, symbol2, next);
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     private ExpressionNode ParseExprList()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var firstNode = _tokenizer.CurSymbol.Code == TokenCode.PyMul ? ParseStarExpr() : ParseBitwiseOr();
+
+        if (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+        {
+            var nodes = new List<ExpressionNode>();
+            var separators = new List<Token>();
+            nodes.Add(firstNode);
+
+            while (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+            {
+                separators.Add(_tokenizer.CurSymbol);
+                _tokenizer.Advance();
+                if (_tokenizer.CurSymbol.Code == TokenCode.PyIn) break;
+                if (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+                    throw new SyntaxError("Unexpected ',' in expression list!", _tokenizer.CurPosition);
+                nodes.Add(_tokenizer.CurSymbol.Code == TokenCode.PyMul ? ParseStarExpr() : ParseBitwiseOr());
+            }
+
+            return new ExprListExpressionNode(start, _tokenizer.CurPosition, nodes.ToImmutableArray(),
+                separators.ToImmutableArray());
+        }
+
+        return firstNode;
     }
     
     private ExpressionNode ParseTestList()
