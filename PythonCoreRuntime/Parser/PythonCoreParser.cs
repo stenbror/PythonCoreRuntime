@@ -928,6 +928,11 @@ public class PythonCoreParser
         return new CompSyncForExpressionNode(start, _tokenizer.CurPosition, symbol1, left, symbol2, right, next);
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
     private ExpressionNode ParseCompFor()
     {
         var start = _tokenizer.CurPosition;
@@ -940,9 +945,22 @@ public class PythonCoreParser
         return new CompForExpressionNode(start, _tokenizer.CurPosition, symbol, right);
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
     private ExpressionNode ParseCompIf()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        if (_tokenizer.CurSymbol.Code != TokenCode.PyIf)
+            throw new SyntaxError("Expecting 'if' in comprehension if expression!", _tokenizer.CurPosition);
+        var symbol = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        var right = ParseTest(false);
+        var next = ParseCompIter();
+
+        return new CompIfExpressionNode(start, _tokenizer.CurPosition, symbol, right, next);
     }
     
     private ExpressionNode ParseYieldExpr()
