@@ -894,9 +894,15 @@ public class PythonCoreParser
         throw new NotImplementedException();
     }
     
-    private ExpressionNode ParseCompIter()
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    private ExpressionNode? ParseCompIter()
     {
-        throw new NotImplementedException();
+        return _tokenizer.CurSymbol.Code == TokenCode.PyAsync ||
+               _tokenizer.CurSymbol.Code == TokenCode.PyFor ? ParseCompFor() :
+            _tokenizer.CurSymbol.Code == TokenCode.PyIf ? ParseCompIf() : null;
     }
     
     private ExpressionNode ParseSyncCompFor()
