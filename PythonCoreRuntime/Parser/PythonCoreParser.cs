@@ -963,13 +963,42 @@ public class PythonCoreParser
         return new CompIfExpressionNode(start, _tokenizer.CurPosition, symbol, right, next);
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     private ExpressionNode ParseYieldExpr()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        if (_tokenizer.CurSymbol.Code != TokenCode.PyYield)
+            throw new SyntaxError("Expecting 'yield' in yield expression!", _tokenizer.CurPosition);
+        var symbol1 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        if (_tokenizer.CurSymbol.Code == TokenCode.PyFrom)
+        {
+            var symbol2 = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+            var right2 = ParseTest(true);
+
+            return new YieldFromExpressionNode(start, _tokenizer.CurPosition, symbol1, symbol2, right2);
+        }
+
+        var right = ParseTestListStarExpr();
+        return new YieldExpressionNode(start, _tokenizer.CurPosition, symbol1, right);
     }
     
     
     private ExpressionNode ParseVarArgsList()
+    {
+        throw new NotImplementedException();
+    }
+    
+    #endregion
+    
+    
+    #region Statement Rules
+
+    private StatementNode ParseTestListStarExpr()
     {
         throw new NotImplementedException();
     }

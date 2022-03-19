@@ -120,6 +120,13 @@ public record CompForExpressionNode(int StartPosition, int EndPosition, Token Sy
 public record CompIfExpressionNode(int StartPosition, int EndPosition, Token Symbol, ExpressionNode Right, ExpressionNode? Next)
     : ExpressionNode(StartPosition, EndPosition);
 
+public record YieldExpressionNode(int StartPosition, int EndPosition, Token Symbol, Node Right)
+    : ExpressionNode(StartPosition, EndPosition);
+
+public record YieldFromExpressionNode(int StartPosition, int EndPosition, Token Symbol1, Token Symbol2, ExpressionNode Right)
+    : ExpressionNode(StartPosition, EndPosition);
+    
+
     
 
 
