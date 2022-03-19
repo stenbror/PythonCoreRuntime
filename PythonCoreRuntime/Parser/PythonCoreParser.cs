@@ -635,9 +635,52 @@ public class PythonCoreParser
         return firstNode;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     private ExpressionNode ParseTrailer()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var symbol = _tokenizer.CurSymbol;
+
+        switch (symbol.Code)
+        {
+            case TokenCode.PyDot:
+            {
+                _tokenizer.Advance();
+                if (_tokenizer.CurSymbol.Code != TokenCode.Name)
+                    throw new SyntaxError("Expecting NAME literal after '.'", _tokenizer.CurPosition);
+                var name = _tokenizer.CurSymbol;
+                _tokenizer.Advance();
+
+                return new DotNameExpressionNode(start, _tokenizer.CurPosition, symbol, name);
+            }
+            case TokenCode.PyLeftParen:
+            {
+                _tokenizer.Advance();
+                var right = _tokenizer.CurSymbol.Code == TokenCode.PyRightParen ? null : ParseArgList();
+                if (_tokenizer.CurSymbol.Code != TokenCode.PyRightParen)
+                    throw new SyntaxError("Expecting ')' in call!", _tokenizer.CurPosition);
+                var symbol2 = _tokenizer.CurSymbol;
+                _tokenizer.Advance();
+
+                return new CallExpressionNode(start, _tokenizer.CurPosition, symbol, right, symbol2);
+            }
+            case TokenCode.PyLeftBracket:
+            {
+                _tokenizer.Advance();
+                var right = _tokenizer.CurSymbol.Code == TokenCode.PyRightParen ? null : ParseSubscriptList();
+                if (_tokenizer.CurSymbol.Code != TokenCode.PyRightBracket)
+                    throw new SyntaxError("Expecting ']' in index!", _tokenizer.CurPosition);
+                var symbol2 = _tokenizer.CurSymbol;
+                _tokenizer.Advance();
+
+                return new IndexExpressionNode(start, _tokenizer.CurPosition, symbol, right, symbol2);
+            }
+            default:
+                return new EmptyExpressionNode(); // Never happens.
+        }
     }
     
     private ExpressionNode ParseSubscriptList()

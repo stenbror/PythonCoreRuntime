@@ -95,6 +95,13 @@ public record DictionaryExpressionNode(int StartPosition, int EndPosition, Token
 public record SetExpressionNode(int StartPosition, int EndPosition, Token Symbol1, ExpressionNode? Right, Token Symbol2) 
     : ExpressionNode(StartPosition, EndPosition);
 
+public record DotNameExpressionNode(int StartPosition, int EndPosition, Token Symbol1, Token Symbol2) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record CallExpressionNode(int StartPosition, int EndPosition, Token Symbol1, ExpressionNode? Right, Token Symbol2) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record IndexExpressionNode(int StartPosition, int EndPosition, Token Symbol1, ExpressionNode? Right, Token Symbol2) 
+    : ExpressionNode(StartPosition, EndPosition);
+
 
 public record StatementNode(int StartPosition, int EndPosition) : Node(StartPosition, EndPosition);
 public record EmptyStatementNode() : ExpressionNode(-1, -1);
