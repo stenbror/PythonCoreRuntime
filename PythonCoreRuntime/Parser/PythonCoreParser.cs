@@ -85,7 +85,24 @@ public class PythonCoreParser
                 return new ListExpressionNode(start, _tokenizer.CurPosition, symbol, right, symbol2);
             }
             case TokenCode.PyLeftCurly:
-                throw new NotImplementedException();
+            {
+                _tokenizer.Advance();
+                var right = _tokenizer.CurSymbol.Code == TokenCode.PyRightCurly ? null :
+                    ParseDictorSetMaker();
+                if (_tokenizer.CurSymbol.Code != TokenCode.PyRightBracket)
+                {
+                    throw right is DictionaryExpressionNode || right == null
+                        ? new SyntaxError("Expecting '}' in dictionary!", _tokenizer.CurPosition)
+                        : new SyntaxError("Expecting '}' in set!", _tokenizer.CurPosition);
+                }
+
+                var symbol2 = _tokenizer.CurSymbol;
+                _tokenizer.Advance();
+                
+                return right is DictionaryExpressionNode || right == null ? 
+                    new DictionaryExpressionNode(start, _tokenizer.CurPosition, symbol, right, symbol2) :
+                    new SetExpressionNode(start, _tokenizer.CurPosition, symbol, right, symbol2);
+            }
             
             default:
                 throw new SyntaxError("Illegal literal found in source!", _tokenizer.CurPosition);
