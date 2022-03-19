@@ -113,6 +113,14 @@ public record ArgListExpressionNode(int StartPosition, int EndPosition, Immutabl
 
 public record ArgumentExpressionNode(int StartPosition, int EndPosition, Token? Left, Token? Symbol, ExpressionNode? Right) 
     : ExpressionNode(StartPosition, EndPosition);
+public record CompSyncForExpressionNode(int StartPosition, int EndPosition, Token Symbol1, ExpressionNode Left, 
+    Token Symbol2, ExpressionNode Right, ExpressionNode? Next) : ExpressionNode(StartPosition, EndPosition);
+public record CompForExpressionNode(int StartPosition, int EndPosition, Token Symbol, ExpressionNode Right)
+    : ExpressionNode(StartPosition, EndPosition);
+public record CompIfExpressionNode(int StartPosition, int EndPosition, Token Symbol, ExpressionNode Right, ExpressionNode? Next)
+    : ExpressionNode(StartPosition, EndPosition);
+
+    
 
 
 public record StatementNode(int StartPosition, int EndPosition) : Node(StartPosition, EndPosition);

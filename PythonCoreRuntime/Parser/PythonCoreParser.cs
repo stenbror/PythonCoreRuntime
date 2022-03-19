@@ -905,14 +905,39 @@ public class PythonCoreParser
             _tokenizer.CurSymbol.Code == TokenCode.PyIf ? ParseCompIf() : null;
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
     private ExpressionNode ParseSyncCompFor()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        if (_tokenizer.CurSymbol.Code != TokenCode.PyFor)
+            throw new SyntaxError("Expecting 'for' in comprehension for expression!", _tokenizer.CurPosition);
+        var symbol1 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        var left = ParseExprList();
+        if (_tokenizer.CurSymbol.Code != TokenCode.PyIn)
+            throw new SyntaxError("Expecting 'in' in comprehension for expression!", _tokenizer.CurPosition);
+        var symbol2 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        var right = ParseOrTest();
+        var next = ParseCompIter();
+
+        return new CompSyncForExpressionNode(start, _tokenizer.CurPosition, symbol1, left, symbol2, right, next);
     }
     
     private ExpressionNode ParseCompFor()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        if (_tokenizer.CurSymbol.Code != TokenCode.PyAsync)
+            throw new SyntaxError("Expecting 'async' in comprehension for expression!", _tokenizer.CurPosition);
+        var symbol = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        var right = ParseSyncCompFor();
+
+        return new CompForExpressionNode(start, _tokenizer.CurPosition, symbol, right);
     }
     
     private ExpressionNode ParseCompIf()
