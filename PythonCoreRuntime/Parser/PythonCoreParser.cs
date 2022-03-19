@@ -61,7 +61,29 @@ public class PythonCoreParser
                 return new StringExpressionNode(start, _tokenizer.CurPosition, elements.ToImmutableArray());
             }
             case TokenCode.PyLeftParen:
+            {
+                _tokenizer.Advance();
+                var right = _tokenizer.CurSymbol.Code == TokenCode.PyRightParen ? null :
+                    _tokenizer.CurSymbol.Code == TokenCode.PyYield ? ParseYieldExpr() : ParseTestListComp();
+                if (_tokenizer.CurSymbol.Code != TokenCode.PyRightParen)
+                    throw new SyntaxError("Expecting ')' in tuple!", _tokenizer.CurPosition);
+                var symbol2 = _tokenizer.CurSymbol;
+                _tokenizer.Advance();
+
+                return new TupleExpressionNode(start, _tokenizer.CurPosition, symbol, right, symbol2);
+            }
             case TokenCode.PyLeftBracket:
+            {
+                _tokenizer.Advance();
+                var right = _tokenizer.CurSymbol.Code == TokenCode.PyRightBracket ? null :
+                    ParseTestListComp();
+                if (_tokenizer.CurSymbol.Code != TokenCode.PyRightBracket)
+                    throw new SyntaxError("Expecting ']' in list!", _tokenizer.CurPosition);
+                var symbol2 = _tokenizer.CurSymbol;
+                _tokenizer.Advance();
+
+                return new ListExpressionNode(start, _tokenizer.CurPosition, symbol, right, symbol2);
+            }
             case TokenCode.PyLeftCurly:
                 throw new NotImplementedException();
             
@@ -601,9 +623,62 @@ public class PythonCoreParser
         throw new NotImplementedException();
     }
     
+    private ExpressionNode ParseSubscriptList()
+    {
+        throw new NotImplementedException();
+    }
     
+    private ExpressionNode ParseSubscript()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private ExpressionNode ParseExprList()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private ExpressionNode ParseTestList()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private ExpressionNode ParseArgList()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private ExpressionNode ParseArgument()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private ExpressionNode ParseDictorSetMaker()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private ExpressionNode ParseCompIter()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private ExpressionNode ParseSyncCompFor()
+    {
+        throw new NotImplementedException();
+    }
     
     private ExpressionNode ParseCompFor()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private ExpressionNode ParseCompIf()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private ExpressionNode ParseYieldExpr()
     {
         throw new NotImplementedException();
     }

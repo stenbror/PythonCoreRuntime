@@ -86,6 +86,14 @@ public record NamedExpressionNode(int StartPosition, int EndPosition, Expression
 public record TestListExpressionNode(int StartPosition, int EndPosition, ImmutableArray<ExpressionNode> Nodes, ImmutableArray<Token> Separatrors) 
     : ExpressionNode(StartPosition, EndPosition);
 
+public record TupleExpressionNode(int StartPosition, int EndPosition, Token Symbol1, ExpressionNode? Right, Token Symbol2) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record ListExpressionNode(int StartPosition, int EndPosition, Token Symbol1, ExpressionNode? Right, Token Symbol2) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record DictionaryExpressionNode(int StartPosition, int EndPosition, Token Symbol1, ExpressionNode? Right, Token Symbol2) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record SetExpressionNode(int StartPosition, int EndPosition, Token Symbol1, ExpressionNode? Right, Token Symbol2) 
+    : ExpressionNode(StartPosition, EndPosition);
 
 
 public record StatementNode(int StartPosition, int EndPosition) : Node(StartPosition, EndPosition);
