@@ -810,9 +810,37 @@ public class PythonCoreParser
         return firstNode;
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
     private ExpressionNode ParseArgList()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var firstNode = ParseArgument();
+
+        if (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+        {
+            var nodes = new List<ExpressionNode>();
+            var separators = new List<Token>();
+            nodes.Add(firstNode);
+
+            while (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+            {
+                separators.Add(_tokenizer.CurSymbol);
+                _tokenizer.Advance();
+                if (_tokenizer.CurSymbol.Code == TokenCode.PyRightParen) break;
+                if (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+                    throw new SyntaxError("Unexpected ',' in argument list!", _tokenizer.CurPosition);
+                nodes.Add(ParseArgument());
+            }
+
+            return new ArgListExpressionNode(start, _tokenizer.CurPosition, nodes.ToImmutableArray(),
+                separators.ToImmutableArray());
+        }
+
+        return firstNode;
     }
     
     private ExpressionNode ParseArgument()

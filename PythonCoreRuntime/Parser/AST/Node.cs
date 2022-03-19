@@ -108,7 +108,8 @@ public record SubscriptExpressionNode(int StartPosition, int EndPosition,
     : ExpressionNode(StartPosition, EndPosition);
 public record ExprListExpressionNode(int StartPosition, int EndPosition, ImmutableArray<ExpressionNode> Nodes, ImmutableArray<Token> Separatrors) 
     : ExpressionNode(StartPosition, EndPosition);
-
+public record ArgListExpressionNode(int StartPosition, int EndPosition, ImmutableArray<ExpressionNode> Nodes, ImmutableArray<Token> Separatrors) 
+    : ExpressionNode(StartPosition, EndPosition);
 
 
 public record StatementNode(int StartPosition, int EndPosition) : Node(StartPosition, EndPosition);
