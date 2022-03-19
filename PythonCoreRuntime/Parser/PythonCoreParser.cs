@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Reflection.Metadata;
 using System.Xml;
 using PythonCoreRuntime.Parser.AST;
 
@@ -843,9 +844,49 @@ public class PythonCoreParser
         return firstNode;
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
     private ExpressionNode ParseArgument()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        ExpressionNode? right = null;
+        Token? left = null, symbol = null;
+
+        switch (_tokenizer.CurSymbol.Code)
+        {
+            case TokenCode.PyMul:
+            case TokenCode.PyPower:
+                symbol = _tokenizer.CurSymbol;
+                _tokenizer.Advance();
+                right = ParseTest(true);
+                break;
+            case TokenCode.Name:
+                left = _tokenizer.CurSymbol;
+                _tokenizer.Advance();
+                switch (_tokenizer.CurSymbol.Code)
+                {
+                    case TokenCode.PyFor:
+                        right = ParseCompFor();
+                        break;
+                    case TokenCode.PyColonAssign:
+                    case TokenCode.PyAssign:
+                        symbol = _tokenizer.CurSymbol;
+                        _tokenizer.Advance();
+                        right = ParseTest(true);
+                        break;
+                    
+                    default:
+                        return new NameExpressionNode(start, _tokenizer.CurPosition, left);
+                }
+                break;
+            default:
+                throw new SyntaxError("Expecting name literal in argument!", _tokenizer.CurPosition);
+        }
+
+        return new ArgumentExpressionNode(start, _tokenizer.CurPosition, left, symbol, right);
     }
     
     private ExpressionNode ParseDictorSetMaker()

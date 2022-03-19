@@ -111,6 +111,9 @@ public record ExprListExpressionNode(int StartPosition, int EndPosition, Immutab
 public record ArgListExpressionNode(int StartPosition, int EndPosition, ImmutableArray<ExpressionNode> Nodes, ImmutableArray<Token> Separatrors) 
     : ExpressionNode(StartPosition, EndPosition);
 
+public record ArgumentExpressionNode(int StartPosition, int EndPosition, Token? Left, Token? Symbol, ExpressionNode? Right) 
+    : ExpressionNode(StartPosition, EndPosition);
+
 
 public record StatementNode(int StartPosition, int EndPosition) : Node(StartPosition, EndPosition);
 public record EmptyStatementNode() : ExpressionNode(-1, -1);
