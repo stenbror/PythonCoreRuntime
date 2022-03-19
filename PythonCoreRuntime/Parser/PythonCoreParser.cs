@@ -555,13 +555,58 @@ public class PythonCoreParser
         return left;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    private ExpressionNode ParseTestListComp()
+    {
+        var start = _tokenizer.CurPosition;
+        var firstNode = _tokenizer.CurSymbol.Code == TokenCode.PyMul ? ParseStarExpr() : ParseNamedExpr();
 
+        if (_tokenizer.CurSymbol.Code == TokenCode.PyAsync || _tokenizer.CurSymbol.Code == TokenCode.PyFor)
+        {
+            var nodes = new List<ExpressionNode>();
+            nodes.Add(firstNode);
+            nodes.Add(ParseCompFor());
+            
+            return new TestListExpressionNode(start, _tokenizer.CurPosition, nodes.ToImmutableArray(), ImmutableArray<Token>.Empty);
+        }
+        else if (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+        {
+            var nodes = new List<ExpressionNode>();
+            var separators = new List<Token>();
+            nodes.Add(firstNode);
+
+            while (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+            {
+                separators.Add(_tokenizer.CurSymbol);
+                _tokenizer.Advance();
+                if (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+                    throw new SyntaxError("Unexpected ',' in list!", _tokenizer.CurPosition);
+                if (_tokenizer.CurSymbol.Code == TokenCode.PyRightParen ||
+                    _tokenizer.CurSymbol.Code == TokenCode.PyRightBracket) break;
+                nodes.Add(_tokenizer.CurSymbol.Code == TokenCode.PyMul ? ParseStarExpr() : ParseNamedExpr());
+            }
+
+            return new TestListExpressionNode(start, _tokenizer.CurPosition, nodes.ToImmutableArray(),
+                separators.ToImmutableArray());
+        }
+
+        return firstNode;
+    }
 
     private ExpressionNode ParseTrailer()
     {
         throw new NotImplementedException();
     }
     
+    
+    
+    private ExpressionNode ParseCompFor()
+    {
+        throw new NotImplementedException();
+    }
     
     
     private ExpressionNode ParseVarArgsList()

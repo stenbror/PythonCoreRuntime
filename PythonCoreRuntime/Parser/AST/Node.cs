@@ -83,6 +83,8 @@ public record TestExpressionNode(int StartPosition, int EndPosition, ExpressionN
 public record NamedExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
     : ExpressionNode(StartPosition, EndPosition);
 
+public record TestListExpressionNode(int StartPosition, int EndPosition, ImmutableArray<ExpressionNode> Nodes, ImmutableArray<Token> Separatrors) 
+    : ExpressionNode(StartPosition, EndPosition);
 
 
 
