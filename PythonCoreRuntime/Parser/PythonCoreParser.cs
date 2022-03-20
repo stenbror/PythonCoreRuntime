@@ -50,6 +50,7 @@ public class PythonCoreParser
                 return new NumberExpressionNode(start, _tokenizer.CurPosition, symbol);
             case TokenCode.String:
             {
+                _tokenizer.Advance();
                 var elements = new List<Token>();
                 elements.Add(symbol);
                 

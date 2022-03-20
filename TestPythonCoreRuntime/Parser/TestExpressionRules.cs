@@ -141,6 +141,8 @@ public class TestExpressionRules
         Assert.Equal(0, res.StartPosition);
         Assert.Equal(15, res.EndPosition);
         
+        Assert.True((((res as EvalInputStatementNode).Right as StringExpressionNode).Symbols.Length) == 1);
+        
         Assert.Equal(TokenCode.String, 
             ((res as EvalInputStatementNode).Right as StringExpressionNode).Symbols[0].Code);
         Assert.Equal("'Hello, World!'", 
@@ -149,6 +151,51 @@ public class TestExpressionRules
             (((res as EvalInputStatementNode).Right as StringExpressionNode).Symbols[0] as StringToken).StartPosition);
         Assert.Equal(15, 
             (((res as EvalInputStatementNode).Right as StringExpressionNode).Symbols[0] as StringToken).EndPosition);
+        
+        Assert.True((res as EvalInputStatementNode).Newlines.IsEmpty);
+        Assert.Equal(TokenCode.Eof, 
+            (res as EvalInputStatementNode).Eof.Code);
+    }
+    
+    /// <summary>
+    ///     Test for multiple String
+    /// </summary>
+    [Fact]
+    public void TestAtomRuleWithMultipleStringLiteral()
+    {
+        var tokens = new List<Token>()
+        {
+            new StringToken(0, 15, "'Hello, World!'", ImmutableArray<Trivia>.Empty),
+            new StringToken(16, 24, "'Again!'", ImmutableArray<Trivia>.Empty),
+            new Token(24, 24, TokenCode.Eof, ImmutableArray<Trivia>.Empty)
+        };
+        
+        var parser = new PythonCoreParser(new MockPythonCoreTokenizer(tokens.ToImmutableArray()));
+        var res = parser.ParseEvalInput();
+        
+        Assert.Equal(0, res.StartPosition);
+        Assert.Equal(24, res.EndPosition);
+
+
+        Assert.True((((res as EvalInputStatementNode).Right as StringExpressionNode).Symbols.Length) == 2);
+        
+        Assert.Equal(TokenCode.String, 
+            ((res as EvalInputStatementNode).Right as StringExpressionNode).Symbols[0].Code);
+        Assert.Equal("'Hello, World!'", 
+            (((res as EvalInputStatementNode).Right as StringExpressionNode).Symbols[0] as StringToken).Value);
+        Assert.Equal(0, 
+            (((res as EvalInputStatementNode).Right as StringExpressionNode).Symbols[0] as StringToken).StartPosition);
+        Assert.Equal(15, 
+            (((res as EvalInputStatementNode).Right as StringExpressionNode).Symbols[0] as StringToken).EndPosition);
+        
+        Assert.Equal(TokenCode.String, 
+            ((res as EvalInputStatementNode).Right as StringExpressionNode).Symbols[1].Code);
+        Assert.Equal("'Again!'", 
+            (((res as EvalInputStatementNode).Right as StringExpressionNode).Symbols[1] as StringToken).Value);
+        Assert.Equal(16, 
+            (((res as EvalInputStatementNode).Right as StringExpressionNode).Symbols[1] as StringToken).StartPosition);
+        Assert.Equal(24, 
+            (((res as EvalInputStatementNode).Right as StringExpressionNode).Symbols[1] as StringToken).EndPosition);
         
         Assert.True((res as EvalInputStatementNode).Newlines.IsEmpty);
         Assert.Equal(TokenCode.Eof, 
