@@ -1334,18 +1334,52 @@ public class PythonCoreParser
 
         return firstNode;
     }
-
-
     
-    
-    
-    
+    /// <summary>
+    ///     Dispatch simple statement to correct rule.
+    /// </summary>
+    /// <returns></returns>
     private StatementNode ParseSmallStmt()
     {
+        switch (_tokenizer.CurSymbol.Code)
+        {
+            case TokenCode.PyDel: return ParseDelStmt();
+            case TokenCode.PyPass: return ParsePassStmt();
+            case TokenCode.PyBreak:
+            case TokenCode.PyContinue:
+            case TokenCode.PyReturn:
+            case TokenCode.PyRaise:
+            case TokenCode.PyYield: return ParseFlowStmt();
+            case TokenCode.PyImport:
+            case TokenCode.PyFrom: return ParseImportStmt();
+            case TokenCode.PyGlobal: return ParseGlobalStmt();
+            case TokenCode.PyNonlocal: return ParseNonlocalStmt();
+            case TokenCode.PyAssert: return ParseAssertStmt();
+            default: return ParseExprStmt();
+        }
+    }
+    
+    private StatementNode ParseExprStmt()
+    {
         throw new NotImplementedException();
     }
-
-    private StatementNode ParseCompoundStmt()
+    
+    private StatementNode ParseTestListStarExpr()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private StatementNode ParseDelStmt()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private StatementNode ParsePassStmt()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private StatementNode ParseFlowStmt()
     {
         throw new NotImplementedException();
     }
@@ -1353,7 +1387,31 @@ public class PythonCoreParser
     
     
     
-    private StatementNode ParseTestListStarExpr()
+    
+    private StatementNode ParseImportStmt()
+    {
+        throw new NotImplementedException();
+    }
+    
+    
+    
+    
+    private StatementNode ParseGlobalStmt()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private StatementNode ParseNonlocalStmt()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private StatementNode ParseAssertStmt()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private StatementNode ParseCompoundStmt()
     {
         throw new NotImplementedException();
     }
