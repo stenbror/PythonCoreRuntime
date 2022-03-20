@@ -1236,6 +1236,82 @@ public class PythonCoreParser
 
         return new EvalInputStatementNode(start, _tokenizer.CurPosition, right, newlines.ToImmutableArray(), _tokenizer.CurSymbol);
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public StatementNode ParseFileInput()
+    {
+        _tokenizer.Advance();
+        var start = _tokenizer.CurPosition;
+        var nodes = new List<StatementNode>();
+        var newlines = new List<Token>();
+
+        while (_tokenizer.CurSymbol.Code != TokenCode.Eof)
+        {
+            if (_tokenizer.CurSymbol.Code == TokenCode.Newline)
+            {
+                newlines.Add(_tokenizer.CurSymbol);
+                _tokenizer.Advance();
+            }
+            else
+            {
+                nodes.Add(ParseStmt());
+            }
+        }
+
+        return new FileInputStatementNode(start, _tokenizer.CurPosition, nodes.ToImmutableArray(), 
+            newlines.ToImmutableArray(), _tokenizer.CurSymbol);
+    }
+
+
+
+
+
+
+
+
+    /// <summary>
+    ///     Dispatch Compound and Simple Statements to correct rules.
+    /// </summary>
+    /// <returns></returns>
+    private StatementNode ParseStmt()
+    {
+        switch (_tokenizer.CurSymbol.Code)
+        {
+            case TokenCode.PyIf:
+            case TokenCode.PyFor:
+            case TokenCode.PyWhile:
+            case TokenCode.PyTry:
+            case TokenCode.PyWith:
+            case TokenCode.PyAsync:
+            case TokenCode.PyDef:
+            case TokenCode.PyClass:
+            case TokenCode.PyMatrice:
+                return ParseCompoundStmt();
+            case TokenCode.Name:
+#pragma warning disable CS8602
+                return (_tokenizer.CurSymbol as NameToken).Value == "match" ? ParseCompoundStmt() : ParseSimpleStmt();
+#pragma warning restore CS8602
+            
+            default:
+                return ParseSimpleStmt();
+        }
+    }
+
+    private StatementNode ParseSimpleStmt()
+    {
+        throw new NotImplementedException();
+    }
+
+
+
+    private StatementNode ParseCompoundStmt()
+    {
+        throw new NotImplementedException();
+    }
+    
     
     
     
