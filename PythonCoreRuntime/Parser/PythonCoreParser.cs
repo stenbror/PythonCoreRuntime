@@ -1213,6 +1213,31 @@ public class PythonCoreParser
     
     #region Statement Rules
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
+    public StatementNode ParseEvalInput()
+    {
+        _tokenizer.Advance();
+        var start = _tokenizer.CurPosition;
+        var newlines = new List<Token>();
+        var right = ParseTestList();
+        while (_tokenizer.CurSymbol.Code == TokenCode.Newline)
+        {
+            newlines.Add(_tokenizer.CurSymbol);
+            _tokenizer.Advance();
+        }
+
+        if (_tokenizer.CurSymbol.Code != TokenCode.Eof)
+            throw new SyntaxError("Expecting End of file!", _tokenizer.CurPosition);
+
+        return new EvalInputStatementNode(start, _tokenizer.CurPosition, right, newlines.ToImmutableArray(), _tokenizer.CurSymbol);
+    }
+    
+    
+    
     private StatementNode ParseTestListStarExpr()
     {
         throw new NotImplementedException();

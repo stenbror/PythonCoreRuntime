@@ -149,3 +149,7 @@ public record VarArgsAssignExpressionNode(int StartPosition, int EndPosition,
 
 public record StatementNode(int StartPosition, int EndPosition) : Node(StartPosition, EndPosition);
 public record EmptyStatementNode() : ExpressionNode(-1, -1);
+
+public record EvalInputStatementNode(int StartPosition, int EndPosition,
+        ExpressionNode Right, ImmutableArray<Token> Newlines, Token Eof) 
+    : StatementNode(StartPosition, EndPosition);
