@@ -1364,9 +1364,49 @@ public class PythonCoreParser
         throw new NotImplementedException();
     }
     
-    private StatementNode ParseTestListStarExpr()
+    private ExpressionNode ParseTestListStarExpr()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var firstNode = _tokenizer.CurSymbol.Code == TokenCode.PyMul ? ParseStarExpr() : ParseTest(true);
+
+        if (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+        {
+            var nodes = new List<ExpressionNode>();
+            var separators = new List<Token>();
+            nodes.Add(firstNode);
+
+            while (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+            {
+                separators.Add(_tokenizer.CurSymbol);
+                _tokenizer.Advance();
+                if (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+                    throw new SyntaxError("unexpected ',' in expression list!", _tokenizer.CurPosition);
+                if (_tokenizer.CurSymbol.Code == TokenCode.PyPlusAssign ||
+                    _tokenizer.CurSymbol.Code == TokenCode.PyMinusAssign ||
+                    _tokenizer.CurSymbol.Code == TokenCode.PyMulAssign ||
+                    _tokenizer.CurSymbol.Code == TokenCode.PyPowerAssign ||
+                    _tokenizer.CurSymbol.Code == TokenCode.PyModuloAssign ||
+                    _tokenizer.CurSymbol.Code == TokenCode.PyMatriceAssign ||
+                    _tokenizer.CurSymbol.Code == TokenCode.PyBitAndAssign ||
+                    _tokenizer.CurSymbol.Code == TokenCode.PyBitOrAssign ||
+                    _tokenizer.CurSymbol.Code == TokenCode.PyBitXorAssign ||
+                    _tokenizer.CurSymbol.Code == TokenCode.PyShiftLeftAssign ||
+                    _tokenizer.CurSymbol.Code == TokenCode.PyShiftRightAssign ||
+                    _tokenizer.CurSymbol.Code == TokenCode.PyDivAssign ||
+                    _tokenizer.CurSymbol.Code == TokenCode.PyFloorDivAssign ||
+                    _tokenizer.CurSymbol.Code == TokenCode.PyColon ||
+                    _tokenizer.CurSymbol.Code == TokenCode.PyAssign ||
+                    _tokenizer.CurSymbol.Code == TokenCode.PySemiColon ||
+                    _tokenizer.CurSymbol.Code == TokenCode.Newline ||
+                    _tokenizer.CurSymbol.Code == TokenCode.PyRightParen) break;
+                nodes.Add(_tokenizer.CurSymbol.Code == TokenCode.PyMul ? ParseStarExpr() : ParseTest(true));
+            }
+            
+            return new TestListExpressionNode(start, _tokenizer.CurPosition, nodes.ToImmutableArray(),
+                separators.ToImmutableArray());
+        }
+        
+        return firstNode;
     }
     
     private StatementNode ParseDelStmt()
