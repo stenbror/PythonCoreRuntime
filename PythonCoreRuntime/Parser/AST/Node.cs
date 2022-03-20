@@ -161,3 +161,46 @@ public record FileInputStatementNode(int StartPosition, int EndPosition, Immutab
 public record StatementListNode(int StartPosition, int EndPosition, ImmutableArray<StatementNode> Nodes,
         ImmutableArray<Token> Separators, Token Newline) 
     : StatementNode(StartPosition, EndPosition);
+
+public record ExpressionStatementNode(int StartPosition, int EndPosition, ExpressionNode Right) 
+    : StatementNode(StartPosition, EndPosition);
+
+public record PlusAssignStatementNode(int StartPosition, int EndPosition,
+        ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : StatementNode(StartPosition, EndPosition);
+public record MinusAssignStatementNode(int StartPosition, int EndPosition,
+        ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : StatementNode(StartPosition, EndPosition);
+public record MulAssignStatementNode(int StartPosition, int EndPosition,
+        ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : StatementNode(StartPosition, EndPosition);
+public record PowerAssignStatementNode(int StartPosition, int EndPosition,
+        ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : StatementNode(StartPosition, EndPosition);
+public record DivAssignStatementNode(int StartPosition, int EndPosition,
+        ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : StatementNode(StartPosition, EndPosition);
+public record FloorDivAssignStatementNode(int StartPosition, int EndPosition,
+        ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : StatementNode(StartPosition, EndPosition);
+public record ModuloAssignStatementNode(int StartPosition, int EndPosition,
+        ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : StatementNode(StartPosition, EndPosition);
+public record MatriceAssignStatementNode(int StartPosition, int EndPosition,
+        ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : StatementNode(StartPosition, EndPosition);
+public record BitAndAssignStatementNode(int StartPosition, int EndPosition,
+        ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : StatementNode(StartPosition, EndPosition);
+public record BitOrAssignStatementNode(int StartPosition, int EndPosition,
+        ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : StatementNode(StartPosition, EndPosition);
+public record BitXorAssignStatementNode(int StartPosition, int EndPosition,
+        ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : StatementNode(StartPosition, EndPosition);
+public record ShiftLeftAssignStatementNode(int StartPosition, int EndPosition,
+        ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : StatementNode(StartPosition, EndPosition);
+public record ShiftRightAssignStatementNode(int StartPosition, int EndPosition,
+        ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : StatementNode(StartPosition, EndPosition);

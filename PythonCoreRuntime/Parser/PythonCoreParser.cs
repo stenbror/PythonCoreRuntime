@@ -1359,11 +1359,81 @@ public class PythonCoreParser
         }
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     private StatementNode ParseExprStmt()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var left = ParseTestListStarExpr();
+        var symbol = _tokenizer.CurSymbol;
+        ExpressionNode right = new EmptyExpressionNode();
+        
+        switch (_tokenizer.CurSymbol.Code)
+        {
+            case TokenCode.PyPlusAssign:
+                _tokenizer.Advance();
+                right = _tokenizer.CurSymbol.Code == TokenCode.PyMul ? ParseStarExpr() : ParseTest(true);
+                return new PlusAssignStatementNode(start, _tokenizer.CurPosition, left, symbol, right);
+            case TokenCode.PyMinusAssign:
+                _tokenizer.Advance();
+                right = _tokenizer.CurSymbol.Code == TokenCode.PyMul ? ParseStarExpr() : ParseTest(true);
+                return new MinusAssignStatementNode(start, _tokenizer.CurPosition, left, symbol, right);
+            case TokenCode.PyMulAssign:
+                _tokenizer.Advance();
+                right = _tokenizer.CurSymbol.Code == TokenCode.PyMul ? ParseStarExpr() : ParseTest(true);
+                return new MulAssignStatementNode(start, _tokenizer.CurPosition, left, symbol, right);
+            case TokenCode.PyPowerAssign:
+                _tokenizer.Advance();
+                right = _tokenizer.CurSymbol.Code == TokenCode.PyMul ? ParseStarExpr() : ParseTest(true);
+                return new PowerAssignStatementNode(start, _tokenizer.CurPosition, left, symbol, right);
+            case TokenCode.PyDivAssign:
+                _tokenizer.Advance();
+                right = _tokenizer.CurSymbol.Code == TokenCode.PyMul ? ParseStarExpr() : ParseTest(true);
+                return new DivAssignStatementNode(start, _tokenizer.CurPosition, left, symbol, right);
+            case TokenCode.PyFloorDivAssign:
+                _tokenizer.Advance();
+                right = _tokenizer.CurSymbol.Code == TokenCode.PyMul ? ParseStarExpr() : ParseTest(true);
+                return new FloorDivAssignStatementNode(start, _tokenizer.CurPosition, left, symbol, right);
+            case TokenCode.PyModuloAssign:
+                _tokenizer.Advance();
+                right = _tokenizer.CurSymbol.Code == TokenCode.PyMul ? ParseStarExpr() : ParseTest(true);
+                return new ModuloAssignStatementNode(start, _tokenizer.CurPosition, left, symbol, right);
+            case TokenCode.PyMatriceAssign:
+                _tokenizer.Advance();
+                right = _tokenizer.CurSymbol.Code == TokenCode.PyMul ? ParseStarExpr() : ParseTest(true);
+                return new MatriceAssignStatementNode(start, _tokenizer.CurPosition, left, symbol, right);
+            case TokenCode.PyBitAndAssign:
+                _tokenizer.Advance();
+                right = _tokenizer.CurSymbol.Code == TokenCode.PyMul ? ParseStarExpr() : ParseTest(true);
+                return new BitAndAssignStatementNode(start, _tokenizer.CurPosition, left, symbol, right);
+            case TokenCode.PyBitOrAssign:
+                _tokenizer.Advance();
+                right = _tokenizer.CurSymbol.Code == TokenCode.PyMul ? ParseStarExpr() : ParseTest(true);
+                return new BitOrAssignStatementNode(start, _tokenizer.CurPosition, left, symbol, right);
+            case TokenCode.PyBitXorAssign:
+                _tokenizer.Advance();
+                right = _tokenizer.CurSymbol.Code == TokenCode.PyMul ? ParseStarExpr() : ParseTest(true);
+                return new BitXorAssignStatementNode(start, _tokenizer.CurPosition, left, symbol, right);
+            case TokenCode.PyShiftLeftAssign:
+                _tokenizer.Advance();
+                right = _tokenizer.CurSymbol.Code == TokenCode.PyMul ? ParseStarExpr() : ParseTest(true);
+                return new ShiftLeftAssignStatementNode(start, _tokenizer.CurPosition, left, symbol, right);
+            case TokenCode.PyShiftRightAssign:
+                _tokenizer.Advance();
+                right = _tokenizer.CurSymbol.Code == TokenCode.PyMul ? ParseStarExpr() : ParseTest(true);
+                return new ShiftRightAssignStatementNode(start, _tokenizer.CurPosition, left, symbol, right);
+            default:
+                return new ExpressionStatementNode(start, _tokenizer.CurPosition, left);
+        }
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
     private ExpressionNode ParseTestListStarExpr()
     {
         var start = _tokenizer.CurPosition;
