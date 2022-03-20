@@ -56,6 +56,9 @@ internal class MockPythonCoreTokenizer : IPythonCoreTokenizer
 /// </summary>
 public class TestExpressionRules
 {
+    /// <summary>
+    ///     Test for Name literal
+    /// </summary>
     [Fact]
     public void TestAtomRuleWithNameLiteral()
     {
@@ -79,6 +82,38 @@ public class TestExpressionRules
             (((res as EvalInputStatementNode).Right as NameExpressionNode).Symbol as NameToken).StartPosition);
         Assert.Equal(1, 
             (((res as EvalInputStatementNode).Right as NameExpressionNode).Symbol as NameToken).EndPosition);
+        
+        Assert.True((res as EvalInputStatementNode).Newlines.IsEmpty);
+        Assert.Equal(TokenCode.Eof, 
+            (res as EvalInputStatementNode).Eof.Code);
+    }
+    
+    /// <summary>
+    ///     Test for Number
+    /// </summary>
+    [Fact]
+    public void TestAtomRuleWithNumberLiteral()
+    {
+        var tokens = new List<Token>()
+        {
+            new NumberToken(0, 1, "1", ImmutableArray<Trivia>.Empty),
+            new Token(1, 1, TokenCode.Eof, ImmutableArray<Trivia>.Empty)
+        };
+        
+        var parser = new PythonCoreParser(new MockPythonCoreTokenizer(tokens.ToImmutableArray()));
+        var res = parser.ParseEvalInput();
+        
+        Assert.Equal(0, res.StartPosition);
+        Assert.Equal(1, res.EndPosition);
+        
+        Assert.Equal(TokenCode.Number, 
+            ((res as EvalInputStatementNode).Right as NumberExpressionNode).Symbol.Code);
+        Assert.Equal("1", 
+            (((res as EvalInputStatementNode).Right as NumberExpressionNode).Symbol as NumberToken).Value);
+        Assert.Equal(0, 
+            (((res as EvalInputStatementNode).Right as NumberExpressionNode).Symbol as NumberToken).StartPosition);
+        Assert.Equal(1, 
+            (((res as EvalInputStatementNode).Right as NumberExpressionNode).Symbol as NumberToken).EndPosition);
         
         Assert.True((res as EvalInputStatementNode).Newlines.IsEmpty);
         Assert.Equal(TokenCode.Eof, 

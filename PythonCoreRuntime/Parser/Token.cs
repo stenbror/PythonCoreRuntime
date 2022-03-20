@@ -102,4 +102,10 @@ public record EofToken() : Token(-1, -1, TokenCode.Eof, ImmutableArray<Trivia>.E
 public record NameToken(int StartPosition, int EndPosition, string Value, ImmutableArray<Trivia> Trivia) 
     : Token(StartPosition, EndPosition, TokenCode.Name, Trivia);
 
+public record NumberToken(int StartPosition, int EndPosition, string Value, ImmutableArray<Trivia> Trivia) 
+    : Token(StartPosition, EndPosition, TokenCode.Number, Trivia);
+
+public record StringToken(int StartPosition, int EndPosition, string Value, ImmutableArray<Trivia> Trivia) 
+    : Token(StartPosition, EndPosition, TokenCode.String, Trivia);
+
 
