@@ -135,8 +135,16 @@ public record DictionaryContainerExpressionNode(int StartPosition, int EndPositi
     : ExpressionNode(StartPosition, EndPosition);    
 public record SetContainerExpressionNode(int StartPosition, int EndPosition, 
         ImmutableArray<ExpressionNode> Nodes, ImmutableArray<Token> Separators) 
-    : ExpressionNode(StartPosition, EndPosition);   
-    
+    : ExpressionNode(StartPosition, EndPosition);
+
+public record VarArgsListExpressionNode(int StartPosition, int EndPosition,
+        Token? MulOperator, ExpressionNode? MulNode, Token? PowerOperator, ExpressionNode? PowerNode,
+        ImmutableArray<ExpressionNode> Nodes, ImmutableArray<Token> Separators) 
+    : ExpressionNode(StartPosition, EndPosition);
+
+public record VarArgsAssignExpressionNode(int StartPosition, int EndPosition,
+        ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
 
 
 public record StatementNode(int StartPosition, int EndPosition) : Node(StartPosition, EndPosition);

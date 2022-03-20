@@ -1101,10 +1101,96 @@ public class PythonCoreParser
         return new YieldExpressionNode(start, _tokenizer.CurPosition, symbol1, right);
     }
     
-    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     private ExpressionNode ParseVarArgsList()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var nodes = new List<ExpressionNode>();
+        var separators = new List<Token>();
+        Token? mulOp = null, powerOp = null;
+        ExpressionNode? mulNode = null, powerNode = null;
+        ExpressionNode? left = null, right = null;
+        Token? symbol = null;
+
+        switch (_tokenizer.CurSymbol.Code)
+        {
+            case TokenCode.PyPower:
+    _power:
+                powerOp = _tokenizer.CurSymbol;
+                _tokenizer.Advance();
+                powerNode = ParseVfpDef();
+                if (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+                {
+                    separators.Add(_tokenizer.CurSymbol);
+                    _tokenizer.Advance();
+                }
+                break;
+            case TokenCode.PyMul:
+    _mul:
+                mulOp = _tokenizer.CurSymbol;
+                _tokenizer.Advance();
+                mulNode = ParseVfpDef();
+                while (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+                {
+                    separators.Add(_tokenizer.CurSymbol);
+                    _tokenizer.Advance();
+                    if (_tokenizer.CurSymbol.Code == TokenCode.PyPower) goto _power;
+                    left = ParseVfpDef();
+                    if (_tokenizer.CurSymbol.Code == TokenCode.PyAssign)
+                    {
+                        symbol = _tokenizer.CurSymbol;
+                        _tokenizer.Advance();
+                        right = ParseTest(true);
+                        nodes.Add(new VarArgsAssignExpressionNode(start, _tokenizer.CurPosition, left, symbol, right));
+                        continue;
+                    }
+                    nodes.Add(left);
+                }
+                break;
+            default:
+                left = ParseVfpDef();
+                if (_tokenizer.CurSymbol.Code == TokenCode.PyAssign)
+                {
+                    symbol = _tokenizer.CurSymbol;
+                    _tokenizer.Advance();
+                    right = ParseTest(true);
+                    nodes.Add(new VarArgsAssignExpressionNode(start, _tokenizer.CurPosition, left, symbol, right));
+                }
+                else nodes.Add(left);
+
+                while (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+                {
+                    separators.Add(_tokenizer.CurSymbol);
+                    _tokenizer.Advance();
+
+                    switch (_tokenizer.CurSymbol.Code)
+                    {
+                        case TokenCode.PyMul: 
+                            goto _mul;
+                        case TokenCode.PyPower: 
+                            goto _power;
+                        default:
+                            left = ParseVfpDef();
+                            if (_tokenizer.CurSymbol.Code == TokenCode.PyAssign)
+                            {
+                                symbol = _tokenizer.CurSymbol;
+                                _tokenizer.Advance();
+                                right = ParseTest(true);
+                                nodes.Add(new VarArgsAssignExpressionNode(start, _tokenizer.CurPosition, left, symbol, right));
+                            }
+                            else nodes.Add(left);
+                            break;
+                    }
+                }
+                break;
+        }
+        
+        return new VarArgsListExpressionNode(start, _tokenizer.CurPosition,
+            mulOp, mulNode, powerOp, powerNode,
+            nodes.ToImmutableArray(), separators.ToImmutableArray());
     }
 
     /// <summary>
