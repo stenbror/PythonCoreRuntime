@@ -157,3 +157,7 @@ public record EvalInputStatementNode(int StartPosition, int EndPosition,
 public record FileInputStatementNode(int StartPosition, int EndPosition, ImmutableArray<StatementNode> Nodes,
         ImmutableArray<Token> Newlines, Token Eof) 
     : StatementNode(StartPosition, EndPosition);
+
+public record StatementListNode(int StartPosition, int EndPosition, ImmutableArray<StatementNode> Nodes,
+        ImmutableArray<Token> Separators, Token Newline) 
+    : StatementNode(StartPosition, EndPosition);

@@ -1300,12 +1300,50 @@ public class PythonCoreParser
         }
     }
 
+    /// <summary>
+    ///     Collect list of small statement separated with semicolon and ends with newline.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
     private StatementNode ParseSimpleStmt()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var firstNode = ParseSmallStmt();
+
+        if (_tokenizer.CurSymbol.Code == TokenCode.PySemiColon)
+        {
+            var nodes = new List<StatementNode>();
+            var separatores = new List<Token>();
+
+            while (_tokenizer.CurSymbol.Code == TokenCode.PySemiColon)
+            {
+                separatores.Add(_tokenizer.CurSymbol);
+                _tokenizer.Advance();
+                if (_tokenizer.CurSymbol.Code == TokenCode.Newline) break;
+                nodes.Add(ParseSmallStmt());
+            }
+            
+            if (_tokenizer.CurSymbol.Code != TokenCode.Newline)
+                throw new SyntaxError("Expecting Newline after statement list!", _tokenizer.CurPosition);
+            var symbol = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+
+            return new StatementListNode(start, _tokenizer.CurPosition, nodes.ToImmutableArray(),
+                separatores.ToImmutableArray(), symbol);
+        }
+
+        return firstNode;
     }
 
 
+    
+    
+    
+    
+    private StatementNode ParseSmallStmt()
+    {
+        throw new NotImplementedException();
+    }
 
     private StatementNode ParseCompoundStmt()
     {
