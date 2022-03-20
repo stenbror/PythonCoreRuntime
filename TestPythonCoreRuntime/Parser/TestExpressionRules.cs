@@ -201,6 +201,66 @@ public class TestExpressionRules
         Assert.Equal(TokenCode.Eof, 
             (res as EvalInputStatementNode).Eof.Code);
     }
+    
+    /// <summary>
+    ///     Test for None
+    /// </summary>
+    [Fact]
+    public void TestAtomRuleWithNoneLiteral()
+    {
+        var tokens = new List<Token>()
+        {
+            new Token(0, 4, TokenCode.PyNone, ImmutableArray<Trivia>.Empty),
+            new Token(4, 4, TokenCode.Eof, ImmutableArray<Trivia>.Empty)
+        };
+        
+        var parser = new PythonCoreParser(new MockPythonCoreTokenizer(tokens.ToImmutableArray()));
+        var res = parser.ParseEvalInput();
+        
+        Assert.Equal(0, res.StartPosition);
+        Assert.Equal(4, res.EndPosition);
+        
+        Assert.Equal(TokenCode.PyNone, 
+            ((res as EvalInputStatementNode).Right as NoneExpressionNode).Symbol.Code);
+        Assert.Equal(0, 
+            (((res as EvalInputStatementNode).Right as NoneExpressionNode).Symbol).StartPosition);
+        Assert.Equal(4, 
+            (((res as EvalInputStatementNode).Right as NoneExpressionNode).Symbol).EndPosition);
+        
+        Assert.True((res as EvalInputStatementNode).Newlines.IsEmpty);
+        Assert.Equal(TokenCode.Eof, 
+            (res as EvalInputStatementNode).Eof.Code);
+    }
+    
+    /// <summary>
+    ///     Test for False
+    /// </summary>
+    [Fact]
+    public void TestAtomRuleWithFalseLiteral()
+    {
+        var tokens = new List<Token>()
+        {
+            new Token(0, 4, TokenCode.PyFalse, ImmutableArray<Trivia>.Empty),
+            new Token(5, 5, TokenCode.Eof, ImmutableArray<Trivia>.Empty)
+        };
+        
+        var parser = new PythonCoreParser(new MockPythonCoreTokenizer(tokens.ToImmutableArray()));
+        var res = parser.ParseEvalInput();
+        
+        Assert.Equal(0, res.StartPosition);
+        Assert.Equal(5, res.EndPosition);
+        
+        Assert.Equal(TokenCode.PyFalse, 
+            ((res as EvalInputStatementNode).Right as FalseExpressionNode).Symbol.Code);
+        Assert.Equal(0, 
+            (((res as EvalInputStatementNode).Right as FalseExpressionNode).Symbol).StartPosition);
+        Assert.Equal(4, 
+            (((res as EvalInputStatementNode).Right as FalseExpressionNode).Symbol).EndPosition);
+        
+        Assert.True((res as EvalInputStatementNode).Newlines.IsEmpty);
+        Assert.Equal(TokenCode.Eof, 
+            (res as EvalInputStatementNode).Eof.Code);
+    }
 }
 
 #pragma warning restore CS8602
