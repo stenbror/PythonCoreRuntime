@@ -1106,6 +1106,21 @@ public class PythonCoreParser
     {
         throw new NotImplementedException();
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
+    private ExpressionNode ParseVfpDef()
+    {
+        var start = _tokenizer.CurPosition;
+        if (_tokenizer.CurSymbol.Code != TokenCode.Name)
+            throw new SyntaxError("Expecting NAME literal in argument list!", _tokenizer.CurPosition);
+        var symbol = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        return new NameExpressionNode(start, _tokenizer.CurPosition, symbol);
+    }
     
     #endregion
     
