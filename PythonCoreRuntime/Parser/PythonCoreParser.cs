@@ -559,7 +559,7 @@ public class PythonCoreParser
         if (!isCond) return ParseOrTest();
         var start = _tokenizer.CurPosition;
         var left = ParseOrTest();
-        if (_tokenizer.CurSymbol.Code != TokenCode.PyIf)
+        if (_tokenizer.CurSymbol.Code == TokenCode.PyIf)
         {
             var symbol1 = _tokenizer.CurSymbol;
             _tokenizer.Advance();
