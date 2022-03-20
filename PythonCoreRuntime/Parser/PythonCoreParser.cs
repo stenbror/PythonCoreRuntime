@@ -92,7 +92,7 @@ public class PythonCoreParser
                     ParseDictorSetMaker();
                 if (_tokenizer.CurSymbol.Code != TokenCode.PyRightBracket)
                 {
-                    throw right is DictionaryExpressionNode || right == null
+                    throw right is DictionaryContainerExpressionNode || right == null
                         ? new SyntaxError("Expecting '}' in dictionary!", _tokenizer.CurPosition)
                         : new SyntaxError("Expecting '}' in set!", _tokenizer.CurPosition);
                 }
@@ -100,7 +100,7 @@ public class PythonCoreParser
                 var symbol2 = _tokenizer.CurSymbol;
                 _tokenizer.Advance();
                 
-                return right is DictionaryExpressionNode || right == null ? 
+                return right is DictionaryContainerExpressionNode || right == null ? 
                     new DictionaryExpressionNode(start, _tokenizer.CurPosition, symbol, right, symbol2) :
                     new SetExpressionNode(start, _tokenizer.CurPosition, symbol, right, symbol2);
             }
@@ -889,9 +889,123 @@ public class PythonCoreParser
         return new ArgumentExpressionNode(start, _tokenizer.CurPosition, left, symbol, right);
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
     private ExpressionNode ParseDictorSetMaker()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var isDictionary = true;
+        ExpressionNode key = new EmptyExpressionNode();
+        var symbol = new Token(-1, -1, TokenCode.Eof, ImmutableArray<Trivia>.Empty);
+        ExpressionNode value = new EmptyExpressionNode();
+
+        switch (_tokenizer.CurSymbol.Code)
+        {
+            case TokenCode.PyMul:
+                isDictionary = false;
+                key = ParseStarExpr();
+                break;
+            case TokenCode.PyPower:
+            {
+                var start2 = _tokenizer.CurPosition;
+                symbol = _tokenizer.CurSymbol;
+                _tokenizer.Advance();
+                value = ParseTest(true);
+                key = new PowerKeyExpressionNode(start2, _tokenizer.CurPosition, symbol, value);
+                break;
+            }
+            default:
+                key = ParseTest(true);
+                if (_tokenizer.CurSymbol.Code == TokenCode.PyColon)
+                {
+                    symbol = _tokenizer.CurSymbol;
+                    _tokenizer.Advance();
+                    value = ParseTest(true);
+                }
+                else isDictionary = false;
+
+                break;
+        }
+
+        var nodes = new List<ExpressionNode>();
+        var separators = new List<Token>();
+
+        if (isDictionary)
+        {
+            if (key is PowerKeyExpressionNode) nodes.Add(key);
+            else if (symbol.Code != TokenCode.PyColon) 
+                throw new SyntaxError("Expecting ':' in key/value!", _tokenizer.CurPosition);
+            else nodes.Add(new KeyValueExpressionNode(start, _tokenizer.CurPosition, key, symbol, value));
+
+            if (_tokenizer.CurSymbol.Code == TokenCode.PyFor || _tokenizer.CurSymbol.Code == TokenCode.PyAsync)
+                nodes.Add(ParseCompFor());
+            else
+            {
+                while (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+                {
+                    separators.Add(_tokenizer.CurSymbol);
+                    _tokenizer.Advance();
+
+                    switch (_tokenizer.CurSymbol.Code)
+                    {
+                        case TokenCode.PyRightCurly: break;
+                        case TokenCode.PyComma:
+                            throw new SyntaxError("Unexpected ',' in dictionary!", _tokenizer.CurPosition);
+                        case TokenCode.PyPower:
+                        {
+                            var start2 = _tokenizer.CurPosition;
+                            symbol = _tokenizer.CurSymbol;
+                            _tokenizer.Advance();
+                            value = ParseTest(true);
+                            nodes.Add(new PowerKeyExpressionNode(start2, _tokenizer.CurPosition, symbol, value));
+                            break;
+                        }
+                        default:
+                            key = ParseTest(true);
+                            if (_tokenizer.CurSymbol.Code != TokenCode.PyColon)
+                                throw new SyntaxError("Expecting ':' in key/value element of dictionary!", _tokenizer.CurPosition);
+                            symbol = _tokenizer.CurSymbol;
+                            _tokenizer.Advance();
+                            value = ParseTest(true);
+                            nodes.Add(new KeyValueExpressionNode(start, _tokenizer.CurPosition, key, symbol, value));
+                            break;
+                    }
+                }
+            }
+            
+            return new DictionaryContainerExpressionNode(start, _tokenizer.CurPosition, nodes.ToImmutableArray(),
+                separators.ToImmutableArray());
+        }
+        
+        nodes.Add(key);
+        
+        if (_tokenizer.CurSymbol.Code == TokenCode.PyFor || _tokenizer.CurSymbol.Code == TokenCode.PyAsync)
+            nodes.Add(ParseCompFor());
+        else
+        {
+            while (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+            {
+                separators.Add(_tokenizer.CurSymbol);
+                _tokenizer.Advance();
+
+                switch (_tokenizer.CurSymbol.Code)
+                {
+                    case TokenCode.PyRightCurly: break;
+                    case TokenCode.PyComma:
+                        throw new SyntaxError("Unexpected ',' in Set!", _tokenizer.CurPosition);
+                    default:
+                        nodes.Add(_tokenizer.CurSymbol.Code == TokenCode.PyMul ? ParseStarExpr() : ParseTest(true));
+                        break;
+                }
+            }
+        }
+        
+        return new SetContainerExpressionNode(start, _tokenizer.CurPosition, nodes.ToImmutableArray(),
+            separators.ToImmutableArray());
+        
     }
     
     /// <summary>

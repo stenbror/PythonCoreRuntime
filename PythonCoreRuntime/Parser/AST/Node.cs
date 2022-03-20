@@ -125,8 +125,17 @@ public record YieldExpressionNode(int StartPosition, int EndPosition, Token Symb
 
 public record YieldFromExpressionNode(int StartPosition, int EndPosition, Token Symbol1, Token Symbol2, ExpressionNode Right)
     : ExpressionNode(StartPosition, EndPosition);
-    
 
+public record PowerKeyExpressionNode(int StartPosition, int EndPosition, Token Symbol, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record KeyValueExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+    : ExpressionNode(StartPosition, EndPosition);
+public record DictionaryContainerExpressionNode(int StartPosition, int EndPosition, 
+        ImmutableArray<ExpressionNode> Nodes, ImmutableArray<Token> Separators) 
+    : ExpressionNode(StartPosition, EndPosition);    
+public record SetContainerExpressionNode(int StartPosition, int EndPosition, 
+        ImmutableArray<ExpressionNode> Nodes, ImmutableArray<Token> Separators) 
+    : ExpressionNode(StartPosition, EndPosition);   
     
 
 
