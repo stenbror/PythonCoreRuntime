@@ -122,6 +122,38 @@ public class TestExpressionRules
         Assert.Equal(TokenCode.Eof, 
             (res as EvalInputStatementNode).Eof.Code);
     }
+    
+    /// <summary>
+    ///     Test for single String
+    /// </summary>
+    [Fact]
+    public void TestAtomRuleWithSingleStringLiteral()
+    {
+        var tokens = new List<Token>()
+        {
+            new StringToken(0, 15, "'Hello, World!'", ImmutableArray<Trivia>.Empty),
+            new Token(15, 15, TokenCode.Eof, ImmutableArray<Trivia>.Empty)
+        };
+        
+        var parser = new PythonCoreParser(new MockPythonCoreTokenizer(tokens.ToImmutableArray()));
+        var res = parser.ParseEvalInput();
+        
+        Assert.Equal(0, res.StartPosition);
+        Assert.Equal(15, res.EndPosition);
+        
+        Assert.Equal(TokenCode.String, 
+            ((res as EvalInputStatementNode).Right as StringExpressionNode).Symbols[0].Code);
+        Assert.Equal("'Hello, World!'", 
+            (((res as EvalInputStatementNode).Right as StringExpressionNode).Symbols[0] as StringToken).Value);
+        Assert.Equal(0, 
+            (((res as EvalInputStatementNode).Right as StringExpressionNode).Symbols[0] as StringToken).StartPosition);
+        Assert.Equal(15, 
+            (((res as EvalInputStatementNode).Right as StringExpressionNode).Symbols[0] as StringToken).EndPosition);
+        
+        Assert.True((res as EvalInputStatementNode).Newlines.IsEmpty);
+        Assert.Equal(TokenCode.Eof, 
+            (res as EvalInputStatementNode).Eof.Code);
+    }
 }
 
 #pragma warning restore CS8602
