@@ -261,6 +261,36 @@ public class TestExpressionRules
         Assert.Equal(TokenCode.Eof, 
             (res as EvalInputStatementNode).Eof.Code);
     }
+    
+    /// <summary>
+    ///     Test for True
+    /// </summary>
+    [Fact]
+    public void TestAtomRuleWithTrueLiteral()
+    {
+        var tokens = new List<Token>()
+        {
+            new Token(0, 4, TokenCode.PyTrue, ImmutableArray<Trivia>.Empty),
+            new Token(5, 5, TokenCode.Eof, ImmutableArray<Trivia>.Empty)
+        };
+        
+        var parser = new PythonCoreParser(new MockPythonCoreTokenizer(tokens.ToImmutableArray()));
+        var res = parser.ParseEvalInput();
+        
+        Assert.Equal(0, res.StartPosition);
+        Assert.Equal(5, res.EndPosition);
+        
+        Assert.Equal(TokenCode.PyTrue, 
+            ((res as EvalInputStatementNode).Right as TrueExpressionNode).Symbol.Code);
+        Assert.Equal(0, 
+            (((res as EvalInputStatementNode).Right as TrueExpressionNode).Symbol).StartPosition);
+        Assert.Equal(4, 
+            (((res as EvalInputStatementNode).Right as TrueExpressionNode).Symbol).EndPosition);
+        
+        Assert.True((res as EvalInputStatementNode).Newlines.IsEmpty);
+        Assert.Equal(TokenCode.Eof, 
+            (res as EvalInputStatementNode).Eof.Code);
+    }
 }
 
 #pragma warning restore CS8602
