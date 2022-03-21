@@ -92,7 +92,8 @@ public enum TokenCode
     PyPowerAssign,
     Name,
     Number,
-    String
+    String,
+    TypeComment
 };
 
 public record Token(int StartPosition, int EndPosition, TokenCode Code, ImmutableArray<Trivia> Trivia);

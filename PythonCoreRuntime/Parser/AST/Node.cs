@@ -204,3 +204,14 @@ public record ShiftLeftAssignStatementNode(int StartPosition, int EndPosition,
 public record ShiftRightAssignStatementNode(int StartPosition, int EndPosition,
         ExpressionNode Left, Token Symbol, ExpressionNode Right) 
     : StatementNode(StartPosition, EndPosition);
+public record AnnAssignStatementNode(int StartPosition, int EndPosition,
+        ExpressionNode Left, Token Symbol1, ExpressionNode Right, Token? Symbol2, ExpressionNode? Next) 
+    : StatementNode(StartPosition, EndPosition);
+
+public record AssignmentStatementNode(int StartPosition, int EndPosition,
+        Node Left, Token Symbol, ExpressionNode Right)
+    : StatementNode(StartPosition, EndPosition)
+{
+    public Token? TypeComment { get; set; }
+    
+}

@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Reflection.Metadata;
 using System.Xml;
+using Microsoft.VisualBasic;
 using PythonCoreRuntime.Parser.AST;
 
 namespace PythonCoreRuntime.Parser;
@@ -1424,6 +1425,41 @@ public class PythonCoreParser
                 _tokenizer.Advance();
                 right = _tokenizer.CurSymbol.Code == TokenCode.PyMul ? ParseStarExpr() : ParseTest(true);
                 return new ShiftRightAssignStatementNode(start, _tokenizer.CurPosition, left, symbol, right);
+            case TokenCode.PyColon:
+            {
+                _tokenizer.Advance();
+                right = ParseTest(true);
+                Token? symbol2 = null;
+                ExpressionNode? next = null;
+                if (_tokenizer.CurSymbol.Code == TokenCode.PyAssign)
+                {
+                    symbol2 = _tokenizer.CurSymbol;
+                    _tokenizer.Advance();
+                    next = _tokenizer.CurSymbol.Code == TokenCode.PyYield ? ParseYieldExpr() : ParseTestListStarExpr();
+                }
+
+                return new AnnAssignStatementNode(start, _tokenizer.CurPosition, left, symbol, right, symbol2, next);
+            }
+            case TokenCode.PyAssign:
+            {
+                var res = left as Node;
+                while (_tokenizer.CurSymbol.Code == TokenCode.PyAssign)
+                {
+                    symbol = _tokenizer.CurSymbol;
+                    _tokenizer.Advance();
+                    right = _tokenizer.CurSymbol.Code == TokenCode.PyMul ? ParseStarExpr() : ParseTest(true);
+                    res = new AssignmentStatementNode(start, _tokenizer.CurPosition, res, symbol, right);
+                }
+
+                if (_tokenizer.CurSymbol.Code == TokenCode.TypeComment)
+                {
+                    var node = res as AssignmentStatementNode;
+                    if (node != null) node.TypeComment = _tokenizer.CurSymbol;
+                    _tokenizer.Advance();
+                }
+
+                return (StatementNode) res;
+            }
             default:
                 return new ExpressionStatementNode(start, _tokenizer.CurPosition, left);
         }
