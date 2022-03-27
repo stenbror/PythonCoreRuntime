@@ -215,3 +215,5 @@ public record AssignmentStatementNode(int StartPosition, int EndPosition,
     public Token? TypeComment { get; set; }
     
 }
+public record DelStatementNode(int StartPosition, int EndPosition, Token Symbol, ExpressionNode Right) 
+    : StatementNode(StartPosition, EndPosition);

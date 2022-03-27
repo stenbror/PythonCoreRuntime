@@ -1515,9 +1515,17 @@ public class PythonCoreParser
         return firstNode;
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     private StatementNode ParseDelStmt()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var symbol = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        var right = ParseExprList();
+        return new DelStatementNode(start, _tokenizer.CurPosition, symbol, right);
     }
     
     private StatementNode ParsePassStmt()
