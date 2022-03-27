@@ -223,3 +223,5 @@ public record BreakStatementNode(int StartPosition, int EndPosition, Token Symbo
     : StatementNode(StartPosition, EndPosition);
 public record ContinueStatementNode(int StartPosition, int EndPosition, Token Symbol) 
     : StatementNode(StartPosition, EndPosition);
+public record YieldStatementNode(int StartPosition, int EndPosition, ExpressionNode Right) 
+    : StatementNode(StartPosition, EndPosition);
