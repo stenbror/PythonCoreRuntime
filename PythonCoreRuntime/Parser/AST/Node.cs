@@ -219,3 +219,7 @@ public record DelStatementNode(int StartPosition, int EndPosition, Token Symbol,
     : StatementNode(StartPosition, EndPosition);
 public record PassStatementNode(int StartPosition, int EndPosition, Token Symbol) 
     : StatementNode(StartPosition, EndPosition);
+public record BreakStatementNode(int StartPosition, int EndPosition, Token Symbol) 
+    : StatementNode(StartPosition, EndPosition);
+public record ContinueStatementNode(int StartPosition, int EndPosition, Token Symbol) 
+    : StatementNode(StartPosition, EndPosition);
