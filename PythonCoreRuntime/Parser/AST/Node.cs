@@ -228,3 +228,5 @@ public record YieldStatementNode(int StartPosition, int EndPosition, ExpressionN
 public record RaiseStatementNode(int StartPosition, int EndPosition, Token Symbol1, ExpressionNode? Left, 
         Token? Symbol2, ExpressionNode? Right) 
     : StatementNode(StartPosition, EndPosition);
+public record ReturnStatementNode(int StartPosition, int EndPosition, Token Symbol, ExpressionNode? Right) 
+    : StatementNode(StartPosition, EndPosition);

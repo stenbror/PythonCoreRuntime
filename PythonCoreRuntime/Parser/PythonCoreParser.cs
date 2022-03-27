@@ -1643,9 +1643,25 @@ public class PythonCoreParser
         return new RaiseStatementNode(start, _tokenizer.CurPosition, symbol1, left, symbol2, right);
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     private StatementNode ParseReturnStmt()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var symbol1 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+
+        if (_tokenizer.CurSymbol.Code != TokenCode.Newline && _tokenizer.CurSymbol.Code == TokenCode.PySemiColon)
+        {
+            var right = ParseTestListStarExpr();
+
+            return new ReturnStatementNode(start, _tokenizer.CurPosition, symbol1, right);
+
+        }
+
+        return new ReturnStatementNode(start, _tokenizer.CurPosition, symbol1, null);
     }
     
     
