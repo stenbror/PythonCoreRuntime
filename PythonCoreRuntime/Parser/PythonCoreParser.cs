@@ -1618,9 +1618,29 @@ public class PythonCoreParser
         return new YieldStatementNode(start, _tokenizer.CurPosition, right);
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     private StatementNode ParseRaiseStmt()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var symbol1 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        ExpressionNode? left = null, right = null;
+        Token? symbol2 = null;
+        if (_tokenizer.CurSymbol.Code != TokenCode.Newline && _tokenizer.CurSymbol.Code != TokenCode.PySemiColon)
+        {
+            left = ParseTest(true);
+            if (_tokenizer.CurSymbol.Code == TokenCode.PyFrom)
+            {
+                symbol2 = _tokenizer.CurSymbol;
+                _tokenizer.Advance();
+                right = ParseTest(true);
+            }
+        }
+        
+        return new RaiseStatementNode(start, _tokenizer.CurPosition, symbol1, left, symbol2, right);
     }
     
     private StatementNode ParseReturnStmt()
