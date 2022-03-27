@@ -217,3 +217,5 @@ public record AssignmentStatementNode(int StartPosition, int EndPosition,
 }
 public record DelStatementNode(int StartPosition, int EndPosition, Token Symbol, ExpressionNode Right) 
     : StatementNode(StartPosition, EndPosition);
+public record PassStatementNode(int StartPosition, int EndPosition, Token Symbol) 
+    : StatementNode(StartPosition, EndPosition);

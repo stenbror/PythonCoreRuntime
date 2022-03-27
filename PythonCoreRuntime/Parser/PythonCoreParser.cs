@@ -1525,12 +1525,21 @@ public class PythonCoreParser
         var symbol = _tokenizer.CurSymbol;
         _tokenizer.Advance();
         var right = ParseExprList();
+        
         return new DelStatementNode(start, _tokenizer.CurPosition, symbol, right);
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     private StatementNode ParsePassStmt()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var symbol = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+
+        return new PassStatementNode(start, _tokenizer.CurPosition, symbol);
     }
     
     private StatementNode ParseFlowStmt()
