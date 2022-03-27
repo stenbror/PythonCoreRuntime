@@ -1572,7 +1572,7 @@ public class PythonCoreParser
             {
                 if (_FuncLevel <= 0) 
                     throw new SyntaxError("Using 'return' outside of function declaration!", _tokenizer.CurPosition);
-                return ParseYieldStmt();
+                return ParseReturnStmt();
             }
             case TokenCode.PyRaise: return ParseRaiseStmt();
             default:
@@ -1616,6 +1616,10 @@ public class PythonCoreParser
         throw new NotImplementedException();
     }
     
+    private StatementNode ParseReturnStmt()
+    {
+        throw new NotImplementedException();
+    }
     
     
     
