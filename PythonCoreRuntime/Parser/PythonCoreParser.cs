@@ -1593,9 +1593,17 @@ public class PythonCoreParser
         return new BreakStatementNode(start, _tokenizer.CurPosition, symbol);
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     private StatementNode ParseContinueStmt()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var symbol = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+
+        return new ContinueStatementNode(start, _tokenizer.CurPosition, symbol);
     }
     
     private StatementNode ParseYieldStmt()
