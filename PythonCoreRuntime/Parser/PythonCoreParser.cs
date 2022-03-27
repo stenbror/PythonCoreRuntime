@@ -1,7 +1,4 @@
 using System.Collections.Immutable;
-using System.Reflection.Metadata;
-using System.Xml;
-using Microsoft.VisualBasic;
 using PythonCoreRuntime.Parser.AST;
 
 namespace PythonCoreRuntime.Parser;
@@ -9,6 +6,8 @@ namespace PythonCoreRuntime.Parser;
 public class PythonCoreParser
 {
     readonly IPythonCoreTokenizer _tokenizer;
+    private int _FlowLevel = 0;
+    private int _FuncLevel = 0;
     
     public PythonCoreParser(IPythonCoreTokenizer tokenizer)
     {
@@ -1542,11 +1541,64 @@ public class PythonCoreParser
         return new PassStatementNode(start, _tokenizer.CurPosition, symbol);
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
     private StatementNode ParseFlowStmt()
+    {
+        switch (_tokenizer.CurSymbol.Code)
+        {
+            case TokenCode.PyBreak:
+            {
+                if (_FlowLevel <= 0) 
+                    throw new SyntaxError("Using 'break' outside of loop statement!", _tokenizer.CurPosition);
+                return ParseBreakStmt();
+            }
+            case TokenCode.PyContinue:
+            {
+                if (_FlowLevel <= 0) 
+                    throw new SyntaxError("Using 'continue' outside of loop statement!", _tokenizer.CurPosition);
+                return ParseBreakStmt();
+            }
+            case TokenCode.PyYield:
+            {
+                if (_FlowLevel <= 0) 
+                    throw new SyntaxError("Using 'yield' outside of loop statement!", _tokenizer.CurPosition);
+                return ParseYieldStmt();
+            }
+            case TokenCode.PyReturn:
+            {
+                if (_FuncLevel <= 0) 
+                    throw new SyntaxError("Using 'return' outside of function declaration!", _tokenizer.CurPosition);
+                return ParseYieldStmt();
+            }
+            case TokenCode.PyRaise: return ParseRaiseStmt();
+            default:
+                throw new SyntaxError("Internal Parser Error! Should not happend!", _tokenizer.CurPosition);
+        }
+    }
+    
+    private StatementNode ParseBreakStmt()
     {
         throw new NotImplementedException();
     }
     
+    private StatementNode ParseContinueStmt()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private StatementNode ParseYieldStmt()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private StatementNode ParseRaiseStmt()
+    {
+        throw new NotImplementedException();
+    }
     
     
     
