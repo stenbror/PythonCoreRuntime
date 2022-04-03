@@ -2004,12 +2004,27 @@ public class PythonCoreParser
 
     private StatementNode ParseIfStatement()
     {
+        
         throw new NotImplementedException();
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
     private StatementNode ParseElseStatement()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var symbol1 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        if (_tokenizer.CurSymbol.Code != TokenCode.PyColon)
+            throw new SyntaxError("Expecting ':' in 'else' statement!", _tokenizer.CurPosition);
+        var symbol2 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        var right = ParseSuiteStatement();
+
+        return new ElseStatementNode(start, _tokenizer.CurPosition, symbol1, symbol2, right);
     }
     
     private StatementNode ParseForStatement()
@@ -2048,6 +2063,11 @@ public class PythonCoreParser
     }
     
     private StatementNode ParseClassStatement()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private StatementNode ParseSuiteStatement()
     {
         throw new NotImplementedException();
     }

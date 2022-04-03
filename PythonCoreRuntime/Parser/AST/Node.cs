@@ -262,3 +262,11 @@ public record ImportNameStatementNode(int StartPosition, int EndPosition,
 public record ImportFromStatementNode(int StartPosition, int EndPosition, Token Symbol1, StatementNode? Left,
         ImmutableArray<Token> Dots, Token Symbol2, Token? Symbol3, StatementNode? Right, Token? Symbol4) 
     : StatementNode(StartPosition, EndPosition);
+public record IfStatementNode(int StartPosition, int EndPosition, Token Symbol, ExpressionNode Left, Token Symbol2, 
+        StatementNode Right, ImmutableArray<StatementNode> ElifNodes, StatementNode? ElseNode) 
+    : StatementNode(StartPosition, EndPosition);
+public record ElifStatementNode(int StartPosition, int EndPosition, Token Symbol1, ExpressionNode Left, 
+        Token Symbol2, StatementNode Right) 
+    : StatementNode(StartPosition, EndPosition);
+public record ElseStatementNode(int StartPosition, int EndPosition, Token Symbol1, Token Symbol2, StatementNode Right) 
+    : StatementNode(StartPosition, EndPosition);
