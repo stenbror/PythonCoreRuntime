@@ -230,15 +230,21 @@ public record RaiseStatementNode(int StartPosition, int EndPosition, Token Symbo
     : StatementNode(StartPosition, EndPosition);
 public record ReturnStatementNode(int StartPosition, int EndPosition, Token Symbol, ExpressionNode? Right) 
     : StatementNode(StartPosition, EndPosition);
-public record GlobalStatement(int StartPosition, int EndPosition, 
+public record GlobalStatementNode(int StartPosition, int EndPosition, 
         ImmutableArray<Token> Names, ImmutableArray<Token> Separators) 
     : StatementNode(StartPosition, EndPosition);
-public record NonlocalStatement(int StartPosition, int EndPosition, 
+public record NonlocalStatementNode(int StartPosition, int EndPosition, 
         ImmutableArray<Token> Names, ImmutableArray<Token> Separators) 
     : StatementNode(StartPosition, EndPosition);
-public record AssertStatement(int StartPosition, int EndPosition, Token Symbol1, ExpressionNode Left, 
+public record AssertStatementNode(int StartPosition, int EndPosition, Token Symbol1, ExpressionNode Left, 
         Token? Symbol2, ExpressionNode? Right) 
     : StatementNode(StartPosition, EndPosition);
-public record DottedNameStatement(int StartPosition, int EndPosition, 
+public record DottedNameStatementNode(int StartPosition, int EndPosition, 
         ImmutableArray<Token> Nodes, ImmutableArray<Token> Separators) 
+    : StatementNode(StartPosition, EndPosition);
+public record DottedAsNamesStatementNode(int StartPosition, int EndPosition,
+        ImmutableArray<StatementNode> Nodes, ImmutableArray<Token> Separators) 
+    : StatementNode(StartPosition, EndPosition);
+public record ImportAsNamesStatementNode(int StartPosition, int EndPosition,
+        ImmutableArray<StatementNode> Nodes, ImmutableArray<Token> Separators) 
     : StatementNode(StartPosition, EndPosition);

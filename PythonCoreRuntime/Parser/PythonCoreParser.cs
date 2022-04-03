@@ -1699,9 +1699,31 @@ public class PythonCoreParser
         throw new NotImplementedException();
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     private StatementNode ParseDottedAsNames()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var left = ParseDottedAsName();
+        if (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+        {
+            var separators = new List<Token>();
+            var nodes = new List<StatementNode>();
+            nodes.Add(left);
+            while (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+            {
+                separators.Add(_tokenizer.CurSymbol);
+                _tokenizer.Advance();
+                nodes.Add(ParseDottedAsName());
+            }
+
+            return new DottedAsNamesStatementNode(start, _tokenizer.CurPosition,
+                nodes.ToImmutableArray(), separators.ToImmutableArray());
+        }
+        
+        return left;
     }
     
     /// <summary>
@@ -1730,10 +1752,9 @@ public class PythonCoreParser
             _tokenizer.Advance();
         }
 
-        return new DottedNameStatement(start, _tokenizer.CurPosition, 
+        return new DottedNameStatementNode(start, _tokenizer.CurPosition, 
             nodes.ToImmutableArray(), separators.ToImmutableArray());
     }
-    
     
     /// <summary>
     /// 
@@ -1763,7 +1784,7 @@ public class PythonCoreParser
             nodes.Add(node);
         }
 
-        return new GlobalStatement(start, _tokenizer.CurPosition, nodes.ToImmutableArray(),
+        return new GlobalStatementNode(start, _tokenizer.CurPosition, nodes.ToImmutableArray(),
             separators.ToImmutableArray());
     }
     
@@ -1795,7 +1816,7 @@ public class PythonCoreParser
             nodes.Add(node);
         }
 
-        return new NonlocalStatement(start, _tokenizer.CurPosition, nodes.ToImmutableArray(),
+        return new NonlocalStatementNode(start, _tokenizer.CurPosition, nodes.ToImmutableArray(),
             separators.ToImmutableArray());
     }
     
@@ -1815,10 +1836,10 @@ public class PythonCoreParser
             _tokenizer.Advance();
             var right = ParseTest(true);
 
-            return new AssertStatement(start, _tokenizer.CurPosition, symbol1, left, symbol2, right);
+            return new AssertStatementNode(start, _tokenizer.CurPosition, symbol1, left, symbol2, right);
         }
 
-        return new AssertStatement(start, _tokenizer.CurPosition, symbol1, left, null, null);
+        return new AssertStatementNode(start, _tokenizer.CurPosition, symbol1, left, null, null);
     }
     
     private StatementNode ParseCompoundStmt()
