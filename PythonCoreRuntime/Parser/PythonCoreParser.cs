@@ -1665,13 +1665,49 @@ public class PythonCoreParser
         return new ReturnStatementNode(start, _tokenizer.CurPosition, symbol1, null);
     }
     
-    
-    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     private StatementNode ParseImportStmt()
+    {
+        return _tokenizer.CurSymbol.Code == TokenCode.PyImport ? ParseImportName() : ParseImportFrom();
+    }
+
+    private StatementNode ParseImportName()
     {
         throw new NotImplementedException();
     }
     
+    private StatementNode ParseImportFrom()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private StatementNode ParseImportAsName()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private StatementNode ParseDottedAsName()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private StatementNode ParseImportAsNames()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private StatementNode ParseDottedAsNames()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private StatementNode ParseDottedName()
+    {
+        throw new NotImplementedException();
+    }
     
     
     /// <summary>
