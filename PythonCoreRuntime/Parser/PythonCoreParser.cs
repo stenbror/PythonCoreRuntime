@@ -1694,9 +1694,31 @@ public class PythonCoreParser
         throw new NotImplementedException();
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     private StatementNode ParseImportAsNames()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var left = ParseImportAsName();
+        if (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+        {
+            var separators = new List<Token>();
+            var nodes = new List<StatementNode>();
+            nodes.Add(left);
+            while (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+            {
+                separators.Add(_tokenizer.CurSymbol);
+                _tokenizer.Advance();
+                nodes.Add(ParseImportAsName());
+            }
+
+            return new ImportAsNamesStatementNode(start, _tokenizer.CurPosition,
+                nodes.ToImmutableArray(), separators.ToImmutableArray());
+        }
+        
+        return left;
     }
     
     /// <summary>
