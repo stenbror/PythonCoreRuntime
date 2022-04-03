@@ -1706,9 +1706,36 @@ public class PythonCoreParser
             separators.ToImmutableArray());
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
     private StatementNode ParseNonlocalStmt()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var symbol1 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        var nodes = new List<Token>();
+        var separators = new List<Token>();
+        if (_tokenizer.CurSymbol.Code != TokenCode.Name) 
+            throw new SyntaxError("Expecting Name literal in 'nonlocal' statement!", _tokenizer.CurPosition);
+        var node = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        nodes.Add(node);
+        while (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+        {
+            separators.Add(_tokenizer.CurSymbol);
+            _tokenizer.Advance();
+            if (_tokenizer.CurSymbol.Code != TokenCode.Name) 
+                throw new SyntaxError("Expecting Name literal in 'nonlocal' statement!", _tokenizer.CurPosition);
+            node = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+            nodes.Add(node);
+        }
+
+        return new NonlocalStatement(start, _tokenizer.CurPosition, nodes.ToImmutableArray(),
+            separators.ToImmutableArray());
     }
     
     private StatementNode ParseAssertStmt()
