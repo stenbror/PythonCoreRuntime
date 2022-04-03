@@ -1738,9 +1738,26 @@ public class PythonCoreParser
             separators.ToImmutableArray());
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     private StatementNode ParseAssertStmt()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var symbol1 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        var left = ParseTest(true);
+        if (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+        {
+            var symbol2 = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+            var right = ParseTest(true);
+
+            return new AssertStatement(start, _tokenizer.CurPosition, symbol1, left, symbol2, right);
+        }
+
+        return new AssertStatement(start, _tokenizer.CurPosition, symbol1, left, null, null);
     }
     
     private StatementNode ParseCompoundStmt()
