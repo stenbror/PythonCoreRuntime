@@ -1674,9 +1674,18 @@ public class PythonCoreParser
         return _tokenizer.CurSymbol.Code == TokenCode.PyImport ? ParseImportName() : ParseImportFrom();
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     private StatementNode ParseImportName()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var symbol = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        var right = ParseDottedAsNames();
+
+        return new ImportNameStatementNode(start, _tokenizer.CurPosition, symbol, right);
     }
     
     private StatementNode ParseImportFrom()
