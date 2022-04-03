@@ -2002,10 +2002,50 @@ public class PythonCoreParser
         return res;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
     private StatementNode ParseIfStatement()
     {
+        var start = _tokenizer.CurPosition;
+        var symbol1 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        var left = ParseNamedExpr();
+        if (_tokenizer.CurSymbol.Code != TokenCode.PyColon)
+            throw new SyntaxError("Expecting ':' in 'if' statement!", _tokenizer.CurPosition);
+        var symbol2 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        var right = ParseSuiteStatement();
+        if (_tokenizer.CurSymbol.Code == TokenCode.PyElif || _tokenizer.CurSymbol.Code == TokenCode.PyElse)
+        {
+            var nodes = new List<StatementNode>();
+            
+            while (_tokenizer.CurSymbol.Code == TokenCode.PyElif)
+            {
+                var start2 = _tokenizer.CurPosition;
+                var symbol3 = _tokenizer.CurSymbol;
+                _tokenizer.Advance();
+                var left2 = ParseNamedExpr();
+                if (_tokenizer.CurSymbol.Code != TokenCode.PyColon)
+                    throw new SyntaxError("Expecting ':' in 'elif' statement!", _tokenizer.CurPosition);
+                var symbol4 = _tokenizer.CurSymbol;
+                _tokenizer.Advance();
+                var righ2 = ParseSuiteStatement();
+                
+                nodes.Add(new ElifStatementNode(start2, _tokenizer.CurPosition, symbol3, left2, 
+                    symbol4, righ2));
+            }
+
+            var elseNode = _tokenizer.CurSymbol.Code == TokenCode.PyElse ? ParseElseStatement() : null;
+            
+            return new IfStatementNode(start, _tokenizer.CurPosition, symbol1, left, symbol2, right, 
+                nodes.ToImmutableArray(), elseNode);
+        }
         
-        throw new NotImplementedException();
+        return new IfStatementNode(start, _tokenizer.CurPosition, symbol1, left, symbol2, right, 
+            new ImmutableArray<StatementNode>(), null);
     }
     
     /// <summary>
