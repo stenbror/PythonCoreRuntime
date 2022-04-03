@@ -259,3 +259,6 @@ public record NameLiteralStatementNode(int StartPosition, int EndPosition, Token
 public record ImportNameStatementNode(int StartPosition, int EndPosition,
         Token Symbol, StatementNode Right) 
     : StatementNode(StartPosition, EndPosition);
+public record ImportFromStatementNode(int StartPosition, int EndPosition, Token Symbol1, StatementNode? Left,
+        ImmutableArray<Token> Dots, Token Symbol2, Token? Symbol3, StatementNode? Right, Token? Symbol4) 
+    : StatementNode(StartPosition, EndPosition);

@@ -1688,9 +1688,57 @@ public class PythonCoreParser
         return new ImportNameStatementNode(start, _tokenizer.CurPosition, symbol, right);
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
     private StatementNode ParseImportFrom()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var symbol1 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        var dots = new List<Token>();
+        while (_tokenizer.CurSymbol.Code == TokenCode.PyDot || _tokenizer.CurSymbol.Code == TokenCode.PyElipsis)
+        {
+            dots.Add(_tokenizer.CurSymbol);
+            _tokenizer.Advance();
+        }
+
+        if (dots.Count == 0 && _tokenizer.CurSymbol.Code == TokenCode.PyImport)
+            throw new SyntaxError("Found 'import' in 'from' statement without name or dots!", _tokenizer.CurPosition);
+
+        var left = _tokenizer.CurSymbol.Code != TokenCode.PyImport ? ParseDottedName() : null;
+        if (_tokenizer.CurSymbol.Code != TokenCode.PyImport)
+            throw new SyntaxError("Expecting 'import' in 'from' statement!", _tokenizer.CurPosition);
+        var symbol2 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+
+        Token? symbol3 = null, symbol4 = null;
+        StatementNode? right = null;
+
+        switch (_tokenizer.CurSymbol.Code)
+        {
+            case TokenCode.PyMul:
+                symbol3 = _tokenizer.CurSymbol;
+                _tokenizer.Advance();
+                break;
+            case TokenCode.PyLeftParen:
+                symbol3 = _tokenizer.CurSymbol;
+                _tokenizer.Advance();
+                right = ParseImportAsNames();
+                if (_tokenizer.CurSymbol.Code != TokenCode.PyRightParen)
+                    throw new SyntaxError("Missing ')' in 'import' statement!", _tokenizer.CurPosition);
+                symbol4 = _tokenizer.CurSymbol;
+                _tokenizer.Advance();
+                break;
+            default:
+                right = ParseImportAsNames();
+                break;
+        }
+
+        return new ImportFromStatementNode(start, _tokenizer.CurPosition, symbol1, left, dots.ToImmutableArray(), 
+            symbol2, symbol3, right, symbol4);
     }
     
     /// <summary>
