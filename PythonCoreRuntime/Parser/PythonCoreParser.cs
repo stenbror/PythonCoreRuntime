@@ -1691,7 +1691,21 @@ public class PythonCoreParser
     
     private StatementNode ParseDottedAsName()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var left = ParseDottedName();
+        if (_tokenizer.CurSymbol.Code == TokenCode.PyAs)
+        {
+            var symbol = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+            if (_tokenizer.CurSymbol.Code != TokenCode.Name) 
+                throw new SyntaxError("Expecting Name literal in 'import' statement after 'as'!", _tokenizer.CurPosition);
+            var right = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+
+            return new DottedAsNameStatementNode(start, _tokenizer.CurPosition, left, symbol, right);
+        }
+
+        return left;
     }
     
     /// <summary>

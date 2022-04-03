@@ -248,3 +248,6 @@ public record DottedAsNamesStatementNode(int StartPosition, int EndPosition,
 public record ImportAsNamesStatementNode(int StartPosition, int EndPosition,
         ImmutableArray<StatementNode> Nodes, ImmutableArray<Token> Separators) 
     : StatementNode(StartPosition, EndPosition);
+public record DottedAsNameStatementNode(int StartPosition, int EndPosition, 
+        StatementNode Left, Token Symbol, Token Right) 
+    : StatementNode(StartPosition, EndPosition);
