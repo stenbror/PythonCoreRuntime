@@ -1964,6 +1964,91 @@ public class PythonCoreParser
     
     private StatementNode ParseCompoundStmt()
     {
+        StatementNode? res = null;
+        
+        switch (_tokenizer.CurSymbol.Code)
+        {
+            case TokenCode.PyIf:
+                res = ParseIfStatement();
+                break;
+            case TokenCode.PyFor:
+                res = ParseForStatement();
+                break;
+            case TokenCode.PyWhile:
+                res = ParseWhileStatement();
+                break;
+            case TokenCode.PyTry:
+                res = ParseTryStatement();
+                break;
+            case TokenCode.PyWith:
+                res = ParseWithStatement();
+                break;
+            case TokenCode.PyAsync:
+                res = ParseAsyncStatement();
+                break;
+            case TokenCode.PyDef:
+                res = ParseFuncDefStatement();
+                break;
+            case TokenCode.PyClass:
+                res = ParseClassStatement();
+                break;
+            case TokenCode.PyMatrice:
+                res = ParseDecoratedStatement();
+                break;
+            default:
+                throw new NotImplementedException(); // match is comming here!
+        }
+
+        return res;
+    }
+
+    private StatementNode ParseIfStatement()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private StatementNode ParseElseStatement()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private StatementNode ParseForStatement()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private StatementNode ParseWhileStatement()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private StatementNode ParseTryStatement()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private StatementNode ParseWithStatement()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private StatementNode ParseFuncDefStatement()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private StatementNode ParseDecoratedStatement()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private StatementNode ParseAsyncStatement()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private StatementNode ParseClassStatement()
+    {
         throw new NotImplementedException();
     }
     
