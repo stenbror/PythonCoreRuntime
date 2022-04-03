@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.ComponentModel.DataAnnotations;
 using PythonCoreRuntime.Parser.AST;
 
 namespace PythonCoreRuntime.Parser;
@@ -1673,10 +1674,36 @@ public class PythonCoreParser
     
     
     
-    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
     private StatementNode ParseGlobalStmt()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var symbol1 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        var nodes = new List<Token>();
+        var separators = new List<Token>();
+        if (_tokenizer.CurSymbol.Code != TokenCode.Name) 
+            throw new SyntaxError("Expecting Name literal in 'global' statement!", _tokenizer.CurPosition);
+        var node = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        nodes.Add(node);
+        while (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+        {
+            separators.Add(_tokenizer.CurSymbol);
+            _tokenizer.Advance();
+            if (_tokenizer.CurSymbol.Code != TokenCode.Name) 
+                throw new SyntaxError("Expecting Name literal in 'global' statement!", _tokenizer.CurPosition);
+            node = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+            nodes.Add(node);
+        }
+
+        return new GlobalStatement(start, _tokenizer.CurPosition, nodes.ToImmutableArray(),
+            separators.ToImmutableArray());
     }
     
     private StatementNode ParseNonlocalStmt()

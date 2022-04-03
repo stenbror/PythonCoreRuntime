@@ -230,3 +230,9 @@ public record RaiseStatementNode(int StartPosition, int EndPosition, Token Symbo
     : StatementNode(StartPosition, EndPosition);
 public record ReturnStatementNode(int StartPosition, int EndPosition, Token Symbol, ExpressionNode? Right) 
     : StatementNode(StartPosition, EndPosition);
+public record GlobalStatement(int StartPosition, int EndPosition, 
+        ImmutableArray<Token> Names, ImmutableArray<Token> Separators) 
+    : StatementNode(StartPosition, EndPosition);
+public record NonlocalStatement(int StartPosition, int EndPosition, 
+        ImmutableArray<Token> Names, ImmutableArray<Token> Separators) 
+    : StatementNode(StartPosition, EndPosition);
