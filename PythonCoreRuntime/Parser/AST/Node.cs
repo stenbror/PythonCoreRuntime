@@ -236,6 +236,9 @@ public record GlobalStatement(int StartPosition, int EndPosition,
 public record NonlocalStatement(int StartPosition, int EndPosition, 
         ImmutableArray<Token> Names, ImmutableArray<Token> Separators) 
     : StatementNode(StartPosition, EndPosition);
-    public record AssertStatement(int StartPosition, int EndPosition, Token Symbol1, ExpressionNode Left, 
-            Token? Symbol2, ExpressionNode? Right) 
-        : StatementNode(StartPosition, EndPosition);
+public record AssertStatement(int StartPosition, int EndPosition, Token Symbol1, ExpressionNode Left, 
+        Token? Symbol2, ExpressionNode? Right) 
+    : StatementNode(StartPosition, EndPosition);
+public record DottedNameStatement(int StartPosition, int EndPosition, 
+        ImmutableArray<Token> Nodes, ImmutableArray<Token> Separators) 
+    : StatementNode(StartPosition, EndPosition);

@@ -1704,9 +1704,34 @@ public class PythonCoreParser
         throw new NotImplementedException();
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
     private StatementNode ParseDottedName()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        if (_tokenizer.CurSymbol.Code != TokenCode.Name) 
+            throw new SyntaxError("Expecting Name literal in 'import' statement!", _tokenizer.CurPosition);
+        var nodes = new List<Token>();
+        var separators = new List<Token>();
+        nodes.Add(_tokenizer.CurSymbol);
+        _tokenizer.Advance();
+
+        while (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+        {
+            separators.Add(_tokenizer.CurSymbol);
+            _tokenizer.Advance();
+            if (_tokenizer.CurSymbol.Code != TokenCode.Name) 
+                throw new SyntaxError("Expecting Name literal in 'import' statement after ','!", _tokenizer.CurPosition);
+            
+            nodes.Add(_tokenizer.CurSymbol);
+            _tokenizer.Advance();
+        }
+
+        return new DottedNameStatement(start, _tokenizer.CurPosition, 
+            nodes.ToImmutableArray(), separators.ToImmutableArray());
     }
     
     
