@@ -251,3 +251,8 @@ public record ImportAsNamesStatementNode(int StartPosition, int EndPosition,
 public record DottedAsNameStatementNode(int StartPosition, int EndPosition, 
         StatementNode Left, Token Symbol, Token Right) 
     : StatementNode(StartPosition, EndPosition);
+public record ImportAsNameStatementNode(int StartPosition, int EndPosition,
+        Token Left, Token Symbol, Token Right) 
+    : StatementNode(StartPosition, EndPosition);
+public record NameLiteralStatementNode(int StartPosition, int EndPosition, Token Symbol) 
+    : StatementNode(StartPosition, EndPosition);

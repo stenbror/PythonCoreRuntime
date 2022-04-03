@@ -1684,11 +1684,38 @@ public class PythonCoreParser
         throw new NotImplementedException();
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
     private StatementNode ParseImportAsName()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        if (_tokenizer.CurSymbol.Code != TokenCode.Name) 
+            throw new SyntaxError("Expecting Name literal in 'import' statement!", _tokenizer.CurPosition);
+        var left = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        if (_tokenizer.CurSymbol.Code == TokenCode.PyAs)
+        {
+            var symbol = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+            if (_tokenizer.CurSymbol.Code != TokenCode.Name) 
+                throw new SyntaxError("Expecting Name literal in 'import' statement after 'as'!", _tokenizer.CurPosition);
+            var right = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+
+            return new ImportAsNameStatementNode(start, _tokenizer.CurPosition, left, symbol, right);
+        }
+
+        return new NameLiteralStatementNode(start, _tokenizer.CurPosition, left);
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
     private StatementNode ParseDottedAsName()
     {
         var start = _tokenizer.CurPosition;
