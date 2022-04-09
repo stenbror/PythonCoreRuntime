@@ -273,3 +273,6 @@ public record ElseStatementNode(int StartPosition, int EndPosition, Token Symbol
 public record WhileStatementNode(int StartPosition, int EndPosition, Token Symbol1, ExpressionNode Left, 
         Token Symbol2, StatementNode Right, StatementNode? Next) 
     : StatementNode(StartPosition, EndPosition);
+public record ForStatementNode(int StartPosition, int EndPosition, Token Symbol1, ExpressionNode Left, Token Symbol2, 
+        ExpressionNode Right, Token? TypeComment, Token Symbol3, StatementNode Next, StatementNode? ElseNode) 
+    : StatementNode(StartPosition, EndPosition);

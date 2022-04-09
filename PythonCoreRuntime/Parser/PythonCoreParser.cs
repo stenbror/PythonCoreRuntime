@@ -2069,7 +2069,30 @@ public class PythonCoreParser
     
     private StatementNode ParseForStatement()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var symbol1 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        var left = ParseExprList();
+        if (_tokenizer.CurSymbol.Code != TokenCode.PyColon)
+            throw new SyntaxError("Expecting 'in' in 'for' statement!", _tokenizer.CurPosition);
+        var symbol2 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        var right = ParseTestList();
+        if (_tokenizer.CurSymbol.Code != TokenCode.PyColon)
+            throw new SyntaxError("Expecting ':' in 'for' statement!", _tokenizer.CurPosition);
+        var symbol3 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        Token? symbol4 = null;
+        if (_tokenizer.CurSymbol.Code == TokenCode.TypeComment)
+        {
+            symbol4 = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+        }
+        var next = ParseSuiteStatement();
+        var elseNode = _tokenizer.CurSymbol.Code == TokenCode.PyElse ? ParseElseStatement() : null;
+
+        return new ForStatementNode(start, _tokenizer.CurPosition, symbol1, left, symbol2, right, 
+            symbol4, symbol3, next, elseNode);
     }
     
     private StatementNode ParseWhileStatement()
