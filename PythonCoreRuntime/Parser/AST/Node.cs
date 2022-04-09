@@ -270,3 +270,6 @@ public record ElifStatementNode(int StartPosition, int EndPosition, Token Symbol
     : StatementNode(StartPosition, EndPosition);
 public record ElseStatementNode(int StartPosition, int EndPosition, Token Symbol1, Token Symbol2, StatementNode Right) 
     : StatementNode(StartPosition, EndPosition);
+public record WhileStatementNode(int StartPosition, int EndPosition, Token Symbol1, ExpressionNode Left, 
+        Token Symbol2, StatementNode Right, StatementNode? Next) 
+    : StatementNode(StartPosition, EndPosition);

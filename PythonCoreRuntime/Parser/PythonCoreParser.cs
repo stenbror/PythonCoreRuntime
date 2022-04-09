@@ -2074,7 +2074,18 @@ public class PythonCoreParser
     
     private StatementNode ParseWhileStatement()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var symbol1 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        var left = ParseTest(true);
+        if (_tokenizer.CurSymbol.Code != TokenCode.PyColon)
+            throw new SyntaxError("Expecting ':' in 'while' statement!", _tokenizer.CurPosition);
+        var symbol2 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        var right = ParseSuiteStatement();
+        var next = _tokenizer.CurSymbol.Code == TokenCode.PyElse ? ParseElseStatement() : null;
+
+        return new WhileStatementNode(start, _tokenizer.CurPosition, symbol1, left, symbol2, right, next);
     }
     
     private StatementNode ParseTryStatement()
