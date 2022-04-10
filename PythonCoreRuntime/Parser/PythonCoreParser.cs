@@ -1320,13 +1320,29 @@ public class PythonCoreParser
         return new SingleInputStatementNode(start, _tokenizer.CurPosition, null, right2);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
+    public StatementNode ParseFuncTypeInput()
+    {
+        _tokenizer.Advance();
+        var start = _tokenizer.CurPosition;
+        var right = ParseFuncType();
+        var newlines = new List<Token>();
+        while (_tokenizer.CurSymbol.Code == TokenCode.Newline)
+        {
+            newlines.Add(_tokenizer.CurSymbol);
+            _tokenizer.Advance();
+        }
 
+        if (_tokenizer.CurSymbol.Code != TokenCode.Eof)
+            throw new SyntaxError("Expecting End of file!", _tokenizer.CurPosition);
 
-
-
-
-
-
+        return new FuncTypeInputStatementNode(start, _tokenizer.CurPosition, right, newlines.ToImmutableArray());
+    }
+    
     /// <summary>
     ///     Dispatch Compound and Simple Statements to correct rules.
     /// </summary>
@@ -2358,6 +2374,11 @@ _finally:
         }
 
         return ParseSimpleStmt();
+    }
+
+    private StatementNode ParseFuncType()
+    {
+        throw new NotImplementedException();
     }
     
     #endregion

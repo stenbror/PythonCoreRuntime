@@ -299,3 +299,6 @@ public record SuiteStatementNode(int StartPosition, int EndPosition, Token Symbo
     : StatementNode(StartPosition, EndPosition);
 public record SingleInputStatementNode(int StartPosition, int EndPosition, Token? Newline, StatementNode? Right) 
     : StatementNode(StartPosition, EndPosition);
+public record FuncTypeInputStatementNode(int StartPosition, int EndPosition, 
+        StatementNode Right, ImmutableArray<Token> Newlines) 
+    : StatementNode(StartPosition, EndPosition);
