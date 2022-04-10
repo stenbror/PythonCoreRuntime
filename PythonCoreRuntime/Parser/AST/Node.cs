@@ -302,3 +302,5 @@ public record SingleInputStatementNode(int StartPosition, int EndPosition, Token
 public record FuncTypeInputStatementNode(int StartPosition, int EndPosition, 
         StatementNode Right, ImmutableArray<Token> Newlines) 
     : StatementNode(StartPosition, EndPosition);
+public record DecoratorsStatementNode(int StartPosition, int EndPosition, ImmutableArray<StatementNode> Nodes) 
+    : StatementNode(StartPosition, EndPosition);

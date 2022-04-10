@@ -2337,6 +2337,24 @@ _finally:
         throw new NotImplementedException();
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    private StatementNode ParseDecoratorsStatement()
+    {
+        var start = _tokenizer.CurPosition;
+        var nodes = new List<StatementNode>();
+        while (_tokenizer.CurSymbol.Code == TokenCode.PyMatrice) nodes.Add(ParseDecoratorStatement());
+
+        return new DecoratorsStatementNode(start, _tokenizer.CurPosition, nodes.ToImmutableArray());
+    }
+    
+    private StatementNode ParseDecoratorStatement()
+    {
+        throw new NotImplementedException();
+    }
+    
     private StatementNode ParseAsyncStatement()
     {
         throw new NotImplementedException();
