@@ -2278,9 +2278,33 @@ _finally:
         throw new NotImplementedException();
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
     private StatementNode ParseSuiteStatement()
     {
-        throw new NotImplementedException();
+        if (_tokenizer.CurSymbol.Code == TokenCode.Newline)
+        {
+            var start = _tokenizer.CurPosition;
+            var symbol1 = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+            if (_tokenizer.CurSymbol.Code == TokenCode.Indent)
+                throw new SyntaxError("Expecting indentation of code block!", _tokenizer.CurPosition);
+            var symbol2 = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+            var nodes = new List<StatementNode>();
+            nodes.Add(ParseStmt());
+            while (_tokenizer.CurSymbol.Code != TokenCode.Dedent) nodes.Add(ParseStmt());
+            var symbol3 = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+
+            return new SuiteStatementNode(start, _tokenizer.CurPosition, symbol1, symbol2, 
+                nodes.ToImmutableArray(), symbol3);
+        }
+
+        return ParseSimpleStmt();
     }
     
     #endregion
