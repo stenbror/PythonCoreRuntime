@@ -297,3 +297,5 @@ public record WithItemStatementNode(int StartPosition, int EndPosition, Expressi
 public record SuiteStatementNode(int StartPosition, int EndPosition, Token Symbol1, Token Symbol2, 
         ImmutableArray<StatementNode> Nodes, Token Symbol3) 
     : StatementNode(StartPosition, EndPosition);
+public record SingleInputStatementNode(int StartPosition, int EndPosition, Token? Newline, StatementNode? Right) 
+    : StatementNode(StartPosition, EndPosition);

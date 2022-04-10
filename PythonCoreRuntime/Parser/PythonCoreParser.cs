@@ -1267,6 +1267,59 @@ public class PythonCoreParser
             newlines.ToImmutableArray(), _tokenizer.CurSymbol);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
+    public StatementNode ParseSingleInput()
+    {
+        _tokenizer.Advance();
+        var start = _tokenizer.CurPosition;
+        switch (_tokenizer.CurSymbol.Code)
+        {
+            case TokenCode.Newline:
+            {
+                var newline = _tokenizer.CurSymbol;
+                _tokenizer.Advance();
+
+                return new SingleInputStatementNode(start, _tokenizer.CurPosition, newline, null);
+            }
+            case TokenCode.PyIf:
+            case TokenCode.PyWhile:
+            case TokenCode.PyFor:
+            case TokenCode.PyTry:
+            case TokenCode.PyWith:
+            case TokenCode.PyDef:
+            case TokenCode.PyClass:
+            case TokenCode.PyMatrice:
+            case TokenCode.PyAsync:
+            {
+                var right = ParseCompoundStmt();
+                if (_tokenizer.CurSymbol.Code != TokenCode.Newline)
+                    throw new SyntaxError("Expecting NEWLINE after compound statement!", _tokenizer.CurPosition);
+                var symbol1 = _tokenizer.CurSymbol;
+                _tokenizer.Advance();
+
+                return new SingleInputStatementNode(start, _tokenizer.CurPosition, symbol1, right);
+            }
+            case TokenCode.Name:
+#pragma warning disable CS8602
+                if ((_tokenizer.CurSymbol as NameToken).Value == "match")
+#pragma warning restore CS8602
+                {
+                    var right = ParseCompoundStmt();
+                    return new SingleInputStatementNode(start, _tokenizer.CurPosition, null, right);
+                }
+
+                break;
+        }
+
+        var right2 = ParseSimpleStmt();
+
+        return new SingleInputStatementNode(start, _tokenizer.CurPosition, null, right2);
+    }
+
 
 
 
