@@ -287,3 +287,10 @@ public record ExceptStatementNode(int StartPosition, int EndPosition,
 public record ExceptClauseStatementNode(int StartPosition, int EndPosition, Token Symbol1, ExpressionNode? Left, 
         Token? Symbol2, Token? Name) 
     : StatementNode(StartPosition, EndPosition);
+public record WithStatementNode(int StartPosition, int EndPosition, Token Symbol1, 
+    ImmutableArray<StatementNode> WithElements, ImmutableArray<Token> Separators, Token Symbol2, 
+    Token? TypeComment, StatementNode Right) :
+    StatementNode(StartPosition, EndPosition);
+public record WithItemStatementNode(int StartPosition, int EndPosition, ExpressionNode Left, 
+        Token? Symbol1, ExpressionNode? Right) 
+    : StatementNode(StartPosition, EndPosition);

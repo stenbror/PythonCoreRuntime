@@ -2201,9 +2201,61 @@ _finally:
         return new ExceptClauseStatementNode(start, _tokenizer.CurPosition, symbol1, left, symbol2, symbol3);
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
     private StatementNode ParseWithStatement()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var symbol1 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        var nodes = new List<StatementNode>();
+        var separators = new List<Token>();
+        nodes.Add(ParseWithItemStatement());
+        while (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+        {
+            separators.Add(_tokenizer.CurSymbol);
+            _tokenizer.Advance();
+            nodes.Add(ParseWithItemStatement());
+        }
+
+        if (_tokenizer.CurSymbol.Code != TokenCode.PyColon)
+            throw new SyntaxError("Expecting ':' in 'with' statement!", _tokenizer.CurPosition);
+        var symbol2 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        Token? typeComment = null;
+        if (_tokenizer.CurSymbol.Code == TokenCode.TypeComment)
+        {
+            typeComment = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+        }
+
+        var right = ParseSuiteStatement();
+
+        return new WithStatementNode(start, _tokenizer.CurPosition, symbol1,
+            nodes.ToImmutableArray(), separators.ToImmutableArray(), symbol2, typeComment, right);
+    }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    private StatementNode ParseWithItemStatement()
+    {
+        var start = _tokenizer.CurPosition;
+        var left = ParseTest(true);
+        Token? symbol1 = null;
+        ExpressionNode? right = null;
+        if (_tokenizer.CurSymbol.Code == TokenCode.PyAs)
+        {
+            symbol1 = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+            right = ParseBitwiseOr();
+        }
+
+        return new WithItemStatementNode(start, _tokenizer.CurPosition, left, symbol1, right);
     }
     
     private StatementNode ParseFuncDefStatement()
