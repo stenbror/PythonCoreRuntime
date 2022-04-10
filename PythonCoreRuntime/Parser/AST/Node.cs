@@ -307,3 +307,6 @@ public record DecoratorsStatementNode(int StartPosition, int EndPosition, Immuta
 public record DecoratorStatementNode(int StartPosition, int EndPosition,
         Token Symbol1, StatementNode Left, Token? Symbol2, ExpressionNode? Right, Token? Symbol3, Token Symbol4) 
     : StatementNode(StartPosition, EndPosition);
+public record DecoratedStatementNode(int StartPosition, int EndPosition,
+        StatementNode Decorators, StatementNode? Right) 
+    : StatementNode(StartPosition, EndPosition);

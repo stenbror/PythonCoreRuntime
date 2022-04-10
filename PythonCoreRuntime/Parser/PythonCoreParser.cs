@@ -2332,9 +2332,32 @@ _finally:
         throw new NotImplementedException();
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
     private StatementNode ParseDecoratedStatement()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var left = ParseDecoratorsStatement();
+        StatementNode? right = null;
+        switch (_tokenizer.CurSymbol.Code)
+        {
+            case TokenCode.PyClass:
+                right = ParseClassStatement();
+                break;
+            case TokenCode.PyDef:
+                right = ParseFuncDefStatement();
+                break;
+            case TokenCode.PyAsync:
+                right = ParseAsyncStatement();
+                break;
+            default:
+                throw new SyntaxError("Expecting 'class', 'def' or 'async' after decorator!", _tokenizer.CurPosition);
+        }
+
+        return new DecoratedStatementNode(start, _tokenizer.CurPosition, left, right);
     }
     
     /// <summary>
