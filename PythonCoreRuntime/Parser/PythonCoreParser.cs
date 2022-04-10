@@ -2350,9 +2350,37 @@ _finally:
         return new DecoratorsStatementNode(start, _tokenizer.CurPosition, nodes.ToImmutableArray());
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
     private StatementNode ParseDecoratorStatement()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var symbol1 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        var left = ParseDottedName();
+        Token? symbol2 = null, symbol3 = null;
+        ExpressionNode? right = null;
+
+        if (_tokenizer.CurSymbol.Code == TokenCode.PyLeftParen)
+        {
+            symbol2 = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+            if (_tokenizer.CurSymbol.Code != TokenCode.PyRightParen) right = ParseArgList();
+            if (_tokenizer.CurSymbol.Code != TokenCode.PyRightParen)
+                throw new SyntaxError("Expecting ')' in decorator!", _tokenizer.CurPosition);
+            symbol3 = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+        }
+
+        if (_tokenizer.CurSymbol.Code != TokenCode.Newline)
+            throw new SyntaxError("Expecting Newline after decorator!", _tokenizer.CurPosition);
+        var symbol4 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+
+        return new DecoratorStatementNode(start, _tokenizer.CurPosition, symbol1, left, symbol2, right, symbol3, symbol4);
     }
     
     private StatementNode ParseAsyncStatement()
