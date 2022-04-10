@@ -276,3 +276,14 @@ public record WhileStatementNode(int StartPosition, int EndPosition, Token Symbo
 public record ForStatementNode(int StartPosition, int EndPosition, Token Symbol1, ExpressionNode Left, Token Symbol2, 
         ExpressionNode Right, Token? TypeComment, Token Symbol3, StatementNode Next, StatementNode? ElseNode) 
     : StatementNode(StartPosition, EndPosition);
+public record TryStatementNode(int StartPosition, int EndPosition, Token Symbol1, Token Symbol2, StatementNode Left,
+        ImmutableArray<StatementNode> Nodes, StatementNode? ElseNode, StatementNode? FinNode) 
+    : StatementNode(StartPosition, EndPosition);
+public record FinallyStatementNode(int StartPosition, int EndPosition, Token Symbol1, Token Symbol2, StatementNode Right) 
+    : StatementNode(StartPosition, EndPosition);
+public record ExceptStatementNode(int StartPosition, int EndPosition, 
+        StatementNode Left, Token Symbol1, StatementNode Right) 
+    : StatementNode(StartPosition, EndPosition);
+public record ExceptClauseStatementNode(int StartPosition, int EndPosition, Token Symbol1, ExpressionNode? Left, 
+        Token? Symbol2, Token? Name) 
+    : StatementNode(StartPosition, EndPosition);

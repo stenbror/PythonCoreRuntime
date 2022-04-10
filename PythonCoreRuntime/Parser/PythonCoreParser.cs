@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 using PythonCoreRuntime.Parser.AST;
 
 namespace PythonCoreRuntime.Parser;
@@ -2067,6 +2068,11 @@ public class PythonCoreParser
         return new ElseStatementNode(start, _tokenizer.CurPosition, symbol1, symbol2, right);
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
     private StatementNode ParseForStatement()
     {
         var start = _tokenizer.CurPosition;
@@ -2095,6 +2101,11 @@ public class PythonCoreParser
             symbol4, symbol3, next, elseNode);
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
     private StatementNode ParseWhileStatement()
     {
         var start = _tokenizer.CurPosition;
@@ -2111,9 +2122,83 @@ public class PythonCoreParser
         return new WhileStatementNode(start, _tokenizer.CurPosition, symbol1, left, symbol2, right, next);
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
     private StatementNode ParseTryStatement()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var symbol1 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        if (_tokenizer.CurSymbol.Code != TokenCode.PyColon)
+            throw new SyntaxError("Expecting ':' in 'try' statement!", _tokenizer.CurPosition);
+        var symbol2 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        var left = ParseSuiteStatement();
+        var nodes = new List<StatementNode>();
+        if (_tokenizer.CurSymbol.Code == TokenCode.PyFinally) goto _finally;
+        
+        if (_tokenizer.CurSymbol.Code != TokenCode.PyExcept)
+            throw new SyntaxError("Expecting one or more 'except' statements in 'try' statement!", _tokenizer.CurPosition);
+        while (_tokenizer.CurSymbol.Code == TokenCode.PyExcept)
+        {
+            var start3 = _tokenizer.CurPosition;
+            var left2 = ParseExceptClauseStatement();
+            if (_tokenizer.CurSymbol.Code != TokenCode.PyFinally)
+                throw new SyntaxError("Expecting ':' in 'except' statement!", _tokenizer.CurPosition);
+            var symbol5 = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+            var right2 = ParseSuiteStatement();
+
+            nodes.Add(new ExceptStatementNode(start3, _tokenizer.CurPosition, left2, symbol5, right2));
+        }
+
+_finally:
+        var elseNode = _tokenizer.CurSymbol.Code == TokenCode.PyElse ? ParseElseStatement() : null;
+
+        StatementNode? fin = null;
+        if (_tokenizer.CurSymbol.Code == TokenCode.PyFinally)
+        {
+            var start2 = _tokenizer.CurPosition;
+            var symbol3 = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+            if (_tokenizer.CurSymbol.Code != TokenCode.PyFinally)
+                throw new SyntaxError("Expecting ':' in 'finally' statement!", _tokenizer.CurPosition);
+            var symbol4 = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+            var right = ParseSuiteStatement();
+            fin = new FinallyStatementNode(start2, _tokenizer.CurPosition, symbol3, 
+                symbol4, right);
+        }
+
+        return new TryStatementNode(start, _tokenizer.CurPosition, symbol1, symbol2, left,
+            nodes.ToImmutableArray(), elseNode, fin);
+    }
+    
+    private StatementNode ParseExceptClauseStatement()
+    {
+        var start = _tokenizer.CurPosition;
+        var symbol1 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        ExpressionNode? left = null;
+        Token? symbol2 = null, symbol3 = null;
+        if (_tokenizer.CurSymbol.Code != TokenCode.PyColon)
+        {
+            left = ParseTest(true);
+            if (_tokenizer.CurSymbol.Code == TokenCode.PyAs)
+            {
+                symbol2 = _tokenizer.CurSymbol;
+                _tokenizer.Advance();
+                if (_tokenizer.CurSymbol.Code != TokenCode.Name)
+                    throw new SyntaxError("Expecting Name literal after 'as' in 'except' clause!", _tokenizer.CurPosition);
+                symbol3 = _tokenizer.CurSymbol;
+                _tokenizer.Advance();
+            }
+        }
+
+        return new ExceptClauseStatementNode(start, _tokenizer.CurPosition, symbol1, left, symbol2, symbol3);
     }
     
     private StatementNode ParseWithStatement()
