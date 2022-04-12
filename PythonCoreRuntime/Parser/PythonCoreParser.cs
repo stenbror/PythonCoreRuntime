@@ -2406,9 +2406,36 @@ _finally:
         return new DecoratorStatementNode(start, _tokenizer.CurPosition, symbol1, left, symbol2, right, symbol3, symbol4);
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
     private StatementNode ParseAsyncStatement()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var symbol1 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        switch (_tokenizer.CurSymbol.Code)
+        {
+            case TokenCode.PyDef:
+            {
+                var right1 = ParseFuncDefStatement();                                             
+                return new AsyncStatementNode(start, _tokenizer.CurPosition, symbol1, right1);
+            }
+            case TokenCode.PyFor:
+            {
+                var right2 = ParseForStatement();
+                return new AsyncStatementNode(start, _tokenizer.CurPosition, symbol1, right2);
+            }
+            case TokenCode.PyWith:
+            {
+                var right3 = ParseWithStatement();
+                return new AsyncStatementNode(start, _tokenizer.CurPosition, symbol1, right3);
+            }
+            default:
+                throw new SyntaxError("Expecting 'def', 'for' or 'with' after 'async' statement!", _tokenizer.CurPosition);
+        }
     }
     
     private StatementNode ParseClassStatement()

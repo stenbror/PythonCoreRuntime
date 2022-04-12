@@ -310,3 +310,5 @@ public record DecoratorStatementNode(int StartPosition, int EndPosition,
 public record DecoratedStatementNode(int StartPosition, int EndPosition,
         StatementNode Decorators, StatementNode? Right) 
     : StatementNode(StartPosition, EndPosition);
+public record AsyncStatementNode(int StartPosition, int EndPosition, Token Symbol, StatementNode Right) 
+    : StatementNode(StartPosition, EndPosition);
