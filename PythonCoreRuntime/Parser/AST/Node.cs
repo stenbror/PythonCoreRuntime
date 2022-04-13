@@ -312,3 +312,6 @@ public record DecoratedStatementNode(int StartPosition, int EndPosition,
     : StatementNode(StartPosition, EndPosition);
 public record AsyncStatementNode(int StartPosition, int EndPosition, Token Symbol, StatementNode Right) 
     : StatementNode(StartPosition, EndPosition);
+public record ClassStatementNode(int StartPosition, int EndPosition, Token Symbol1, Token Name, Token? Symbol3,
+        ExpressionNode? Left, Token? Symbol4, Token Symbol5, StatementNode Right) 
+    : StatementNode(StartPosition, EndPosition);

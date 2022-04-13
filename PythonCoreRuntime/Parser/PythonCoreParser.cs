@@ -2438,9 +2438,41 @@ _finally:
         }
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
     private StatementNode ParseClassStatement()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        var symbol1 = _tokenizer.CurSymbol; 
+        _tokenizer.Advance();
+        if (_tokenizer.CurSymbol.Code != TokenCode.Name)
+            throw new SyntaxError("Expecting Name of 'class' statement!", _tokenizer.CurPosition);
+        var symbol2 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        Token? symbol3 = null, symbol4 = null;
+        ExpressionNode? left = null;
+        if (_tokenizer.CurSymbol.Code == TokenCode.PyLeftParen)
+        {
+            symbol3 = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+            if (_tokenizer.CurSymbol.Code != TokenCode.PyRightParen) left = ParseArgList();
+            if (_tokenizer.CurSymbol.Code != TokenCode.PyRightParen)
+                throw new SyntaxError("Expecting ')' in 'class' statement!", _tokenizer.CurPosition);
+            symbol4 = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+        }
+
+        if (_tokenizer.CurSymbol.Code != TokenCode.PyColon)
+            throw new SyntaxError("Expecting ':' in 'class' statement!", _tokenizer.CurPosition);
+        var symbol5 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        var right = ParseSuiteStatement();
+
+        return new ClassStatementNode(start, _tokenizer.CurPosition, symbol1, symbol1, symbol3, left, 
+            symbol4, symbol5, right);
     }
     
     /// <summary>
