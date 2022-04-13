@@ -2327,6 +2327,23 @@ _finally:
         return new WithItemStatementNode(start, _tokenizer.CurPosition, left, symbol1, right);
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
+    private StatementNode ParseAsyncDeftatement()
+    {
+        var start = _tokenizer.CurPosition;
+        var symbol1 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        if (_tokenizer.CurSymbol.Code != TokenCode.PyDef)
+            throw new SyntaxError("Expecting 'def' after 'async'!", _tokenizer.CurPosition);
+        var right = ParseFuncDefStatement();
+
+        return new AsyncFuncDefStatementNode(start, _tokenizer.CurPosition, symbol1, right);
+    }                                             
+    
     private StatementNode ParseFuncDefStatement()
     {
         throw new NotImplementedException();

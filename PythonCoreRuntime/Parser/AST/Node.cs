@@ -315,3 +315,5 @@ public record AsyncStatementNode(int StartPosition, int EndPosition, Token Symbo
 public record ClassStatementNode(int StartPosition, int EndPosition, Token Symbol1, Token Name, Token? Symbol3,
         ExpressionNode? Left, Token? Symbol4, Token Symbol5, StatementNode Right) 
     : StatementNode(StartPosition, EndPosition);
+public record AsyncFuncDefStatementNode(int StartPosition, int EndPosition, Token Symbol1, StatementNode Right) 
+    : StatementNode(StartPosition, EndPosition);
