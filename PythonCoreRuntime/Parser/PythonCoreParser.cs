@@ -2867,7 +2867,31 @@ _finally:
         return ParseSimpleStmt();
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
     private StatementNode ParseFuncType()
+    {
+        var start = _tokenizer.CurPosition;
+        var symbol1 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        var left = _tokenizer.CurSymbol.Code != TokenCode.PyRightParen ? ParseTypedList() : null;
+        if (_tokenizer.CurSymbol.Code != TokenCode.PyRightParen)
+            throw new SyntaxError("Expecting ')' in type statement!", _tokenizer.CurPosition);
+        var symbol2 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        if (_tokenizer.CurSymbol.Code != TokenCode.PyArrow)
+            throw new SyntaxError("Expecting '->' in type statement!", _tokenizer.CurPosition);
+        var symbol3 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        var right = ParseTest(true);
+
+        return new FuncTypeNode(start, _tokenizer.CurPosition, symbol1, left, symbol2, symbol3, right);
+    }
+    
+    private StatementNode ParseTypedList()
     {
         throw new NotImplementedException();
     }
