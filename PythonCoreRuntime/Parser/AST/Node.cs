@@ -320,3 +320,5 @@ public record AsyncFuncDefStatementNode(int StartPosition, int EndPosition, Toke
 public record FuncDefStatementNode(int StartPosition, int EndPosition, Token Symbol1, Token Name, StatementNode Para, Token? Symbol3, 
         ExpressionNode? Left, Token Symbol4, Token? TypeComment, StatementNode Right) 
     : StatementNode(StartPosition, EndPosition);
+public record ParameterNode(int StartPosition, int EndPosition, Token Symbol1, StatementNode? Right, Token Symbol2) 
+    : StatementNode(StartPosition, EndPosition);

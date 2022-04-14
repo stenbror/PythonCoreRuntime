@@ -2384,15 +2384,38 @@ _finally:
             left, symbol4, tc, right);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
     private StatementNode ParseParameter()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        if (_tokenizer.CurSymbol.Code != TokenCode.PyLeftParen)
+            throw new SyntaxError("Expecting '(' in 'def' statement!", _tokenizer.CurPosition);
+        var symbol1 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        var right = _tokenizer.CurSymbol.Code != TokenCode.PyRightParen ? ParseTypedArgs() : null;
+        if (_tokenizer.CurSymbol.Code != TokenCode.PyRightParen)
+            throw new SyntaxError("Expecting ')' in 'def' statement!", _tokenizer.CurPosition);
+        var symbol2 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+
+        return new ParameterNode(start, _tokenizer.CurPosition, symbol1, right, symbol2);
     }
     
-    private StatementNode ParseFuncSuiteStatement()  
+    private StatementNode ParseTypedArgs()  
     {                                       
         throw new NotImplementedException();
     }                                       
+    
+    private StatementNode ParseFuncSuiteStatement()  
+   
+    {                                       
+   
+        throw new NotImplementedException();
+   }                                       
     
     /// <summary>
     /// 
