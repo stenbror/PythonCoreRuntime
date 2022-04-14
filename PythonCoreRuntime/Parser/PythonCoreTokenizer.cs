@@ -112,9 +112,200 @@ public class PythonCoreTokenizer : IPythonCoreTokenizer
                 res = new Optional<Token>(new Token(CurPosition, _index, 
                     TokenCode.PyDiv, trivias));
                 break;
+            case ( '<', '<', '=' ):
+                _index += 2;
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyShiftLeftAssign, trivias));
+                break;
+            case ( '<', '<', _ ):
+                _index++;
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyShiftLeft, trivias));
+                break;
+            case ( '<', '=', _ ):
+                _index++;
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyLessEqual, trivias));
+                break;
+            case ( '<', '>', _ ):
+                _index++;
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyNotEqual, trivias));
+                break;
+            case ( '<', _ , _ ):
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyLess, trivias));
+                break;
+            case ( '>', '>', '=' ):
+                _index += 2;
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyShiftRightAssign, trivias));
+                break;
+            case ( '>', '>', _ ):
+                _index++;
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyShiftRight, trivias));
+                break;
+            case ( '>', '=', _ ):
+                _index++;
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyGreaterEqual, trivias));
+                break;
+            case ( '>', _ , _ ):
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyGreater, trivias));
+                break;
+            case ( '.', '.', '.' ):
+                _index += 2;
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyElipsis, trivias));
+                break;
+            case ( '.', _ , _ ):
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyDot, trivias));
+                break;
+            case ( '+', '=', _ ):
+                _index++;
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyPlusAssign, trivias));
+                break;
+            case ( '+', _ , _ ):
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyPlus, trivias));
+                break;
+            case ( '-', '=', _ ):
+                _index++;
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyMinusAssign, trivias));
+                break;
+            case ( '-', '>', _ ):
+                _index++;
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyArrow, trivias));
+                break;
+            case ( '-', _ , _ ):
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyMinus, trivias));
+                break;
+            case ( '%', '=', _ ):
+                _index++;
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyModuloAssign, trivias));
+                break;
+            case ( '%', _ , _ ):
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyModulo, trivias));
+                break;
+            case ( '&', '=', _ ):
+                _index++;
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyBitAndAssign, trivias));
+                break;
+            case ( '&', _ , _ ):
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyBitAnd, trivias));
+                break;
+            case ( '|', '=', _ ):
+                _index++;
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyBitOrAssign, trivias));
+                break;
+            case ( '|', _ , _ ):
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyBitOr, trivias));
+                break;
+            case ( '^', '=', _ ):
+                _index++;
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyBitXorAssign, trivias));
+                break;
+            case ( '^', _ , _ ):
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyBitXor, trivias));
+                break;
+            case ( '@', '=', _ ):
+                _index++;
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyMatriceAssign, trivias));
+                break;
+            case ( '@', _ , _ ):
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyMatrice, trivias));
+                break;
+            case ( '=', '=', _ ):
+                _index++;
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyEqual, trivias));
+                break;
+            case ( '=', _ , _ ):
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyAssign, trivias));
+                break;
+            case ( ':', '=', _ ):
+                _index++;
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyColonAssign, trivias));
+                break;
+            case ( ':', _ , _ ):
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyColon, trivias));
+                break;
+            case ( '!', '=', _ ):
+                _index++;
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyNotEqual, trivias));
+                break;
+            case ( '~', _ , _ ):
+                _index++;
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyBitInvert, trivias));
+                break;
+            case ( ',', _ , _ ):
+                _index++;
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyComma, trivias));
+                break;
+            case ( ';', _ , _ ):
+                _index++;
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PySemiColon, trivias));
+                break;
+            case ( '(', _ , _ ):
+                _index++;
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyLeftParen, trivias));
+                break;
+            case ( '[', _ , _ ):
+                _index++;
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyLeftBracket, trivias));
+                break;
+            case ( '{', _ , _ ):
+                _index++;
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyLeftCurly, trivias));
+                break;
+            case ( ')', _ , _ ):
+                _index++;
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyRightParen, trivias));
+                break;
+            case ( ']', _ , _ ):
+                _index++;
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyRightBracket, trivias));
+                break;
+            case ( '}', _ , _ ):
+                _index++;
+                res = new Optional<Token>(new Token(CurPosition, _index, 
+                    TokenCode.PyRightCurly, trivias));
+                break;
+            default:
+                _index--;
+                CurPosition = _index;
+                break;
         }
-
-
+        
         return res;
     }
 
