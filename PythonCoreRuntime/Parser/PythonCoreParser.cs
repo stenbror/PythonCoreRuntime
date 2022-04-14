@@ -2425,9 +2425,206 @@ _finally:
         return left;
     }     
     
-    private StatementNode ParseTypedArgsList()  
-    {                                       
-        throw new NotImplementedException();
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    private StatementNode ParseTypedArgsList()
+    {
+        var start = _tokenizer.CurPosition;
+        Token? mulOp = null, powerOp = null, slashOp = null, tcMul = null, tcPower = null;
+        StatementNode? mulNode = null, powerNode = null;
+        var nodes = new List<StatementNode>();
+        var sepOp = new List<Token>();
+        var tcNodes = new List<Token>();
+
+        switch (_tokenizer.CurSymbol.Code)
+        {
+            case TokenCode.PyPower:
+            {
+                powerOp = _tokenizer.CurSymbol;
+                _tokenizer.Advance();
+                powerNode = ParseTFPDef();
+                if (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+                {
+                    sepOp.Add(_tokenizer.CurSymbol);
+                    _tokenizer.Advance();
+                    if (_tokenizer.CurSymbol.Code == TokenCode.TypeComment)
+                    {
+                        tcPower = _tokenizer.CurSymbol;
+                        _tokenizer.Advance();
+                    }
+                }
+                break;
+            }
+            case TokenCode.PyMul:
+            {
+                mulOp = _tokenizer.CurSymbol;
+                _tokenizer.Advance();
+                mulNode = ParseTFPDef();
+                while (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+                {
+                    sepOp.Add(_tokenizer.CurSymbol);
+                    _tokenizer.Advance();
+                    if (_tokenizer.CurSymbol.Code == TokenCode.TypeComment)
+                    {
+                        tcMul = _tokenizer.CurSymbol;
+                        _tokenizer.Advance();
+                    }
+
+                    if (_tokenizer.CurSymbol.Code == TokenCode.PyPower)
+                    {
+                        powerOp = _tokenizer.CurSymbol;
+                        _tokenizer.Advance();
+                        powerNode = ParseTFPDef();
+                        if (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+                        {
+                            sepOp.Add(_tokenizer.CurSymbol);
+                            _tokenizer.Advance();
+                            if (_tokenizer.CurSymbol.Code == TokenCode.TypeComment)
+                            {
+                                tcPower = _tokenizer.CurSymbol;
+                                _tokenizer.Advance();
+                            }
+                        }
+                        break;
+                    }
+
+                    nodes.Add(ParseTypedArgument());
+                }
+                break;
+            }
+
+            default:
+            {
+                nodes.Add(ParseTypedArgument());
+                
+                while (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+                {
+                    sepOp.Add(_tokenizer.CurSymbol);
+                    _tokenizer.Advance();
+                    if (_tokenizer.CurSymbol.Code == TokenCode.TypeComment)
+                    {
+                        tcNodes.Add(_tokenizer.CurSymbol);
+                        _tokenizer.Advance();
+                    }
+
+                    if (_tokenizer.CurSymbol.Code == TokenCode.PyMul ||
+                        _tokenizer.CurSymbol.Code == TokenCode.PyPower ||
+                        _tokenizer.CurSymbol.Code == TokenCode.PyDiv ||
+                        _tokenizer.CurSymbol.Code == TokenCode.PyRightParen) break;
+                    
+                    nodes.Add(ParseTypedArgument());
+                }
+
+                if (_tokenizer.CurSymbol.Code == TokenCode.PyDiv)
+                {
+                    slashOp = _tokenizer.CurSymbol;
+                    _tokenizer.Advance();
+
+                    if (_tokenizer.CurSymbol.Code == TokenCode.TypeComment)
+                    {
+                        tcNodes.Add(_tokenizer.CurSymbol);
+                        _tokenizer.Advance();
+                    }
+
+                    while (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+                    {
+                        sepOp.Add(_tokenizer.CurSymbol);
+                        _tokenizer.Advance();
+                        
+                        if (_tokenizer.CurSymbol.Code == TokenCode.TypeComment)
+                        {
+                            tcNodes.Add(_tokenizer.CurSymbol);
+                            _tokenizer.Advance();
+                        }
+                        
+                        if (_tokenizer.CurSymbol.Code == TokenCode.PyMul ||
+                            _tokenizer.CurSymbol.Code == TokenCode.PyPower ||
+                            _tokenizer.CurSymbol.Code == TokenCode.PyRightParen) break;
+                    
+                        nodes.Add(ParseTypedArgument());
+                    }
+                    
+                    if (_tokenizer.CurSymbol.Code == TokenCode.TypeComment)
+                    {
+                        tcNodes.Add(_tokenizer.CurSymbol);
+                        _tokenizer.Advance();
+                    }
+                }
+
+                if (_tokenizer.CurSymbol.Code == TokenCode.PyMul)
+                {
+                    mulOp = _tokenizer.CurSymbol;
+                    _tokenizer.Advance();
+                    mulNode = ParseTFPDef();
+                    while (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+                    {
+                        sepOp.Add(_tokenizer.CurSymbol);
+                        _tokenizer.Advance();
+                        if (_tokenizer.CurSymbol.Code == TokenCode.TypeComment)
+                        {
+                            tcMul = _tokenizer.CurSymbol;
+                            _tokenizer.Advance();
+                        }
+
+                        if (_tokenizer.CurSymbol.Code == TokenCode.PyPower)
+                        {
+                            powerOp = _tokenizer.CurSymbol;
+                            _tokenizer.Advance();
+                            powerNode = ParseTFPDef();
+                            if (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+                            {
+                                sepOp.Add(_tokenizer.CurSymbol);
+                                _tokenizer.Advance();
+                                if (_tokenizer.CurSymbol.Code == TokenCode.TypeComment)
+                                {
+                                    tcPower = _tokenizer.CurSymbol;
+                                    _tokenizer.Advance();
+                                }
+                            }
+                            break;
+                        }
+
+                        nodes.Add(ParseTypedArgument());
+                    }
+                }
+
+                if (_tokenizer.CurSymbol.Code == TokenCode.PyPower)
+                {
+                    powerOp = _tokenizer.CurSymbol;
+                    _tokenizer.Advance();
+                    powerNode = ParseTFPDef();
+                    if (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+                    {
+                        sepOp.Add(_tokenizer.CurSymbol);
+                        _tokenizer.Advance();
+                        if (_tokenizer.CurSymbol.Code == TokenCode.TypeComment)
+                        {
+                            tcPower = _tokenizer.CurSymbol;
+                            _tokenizer.Advance();
+                        }
+                    }
+                }
+
+                break;
+            }
+        }
+
+        return new TypedArgsListNode(
+            start,
+            _tokenizer.CurPosition,
+            mulOp,
+            mulNode,
+            tcMul,
+            powerOp,
+            powerNode,
+            tcPower,
+            slashOp,
+            nodes.ToImmutableArray(),
+            sepOp.ToImmutableArray(),
+            tcNodes.ToImmutableArray()
+        );
     }
     
     /// <summary>

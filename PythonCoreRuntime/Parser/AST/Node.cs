@@ -327,3 +327,7 @@ public record TFPDefNode(int StartPosition, int EndPosition, StatementNode Left,
 public record TypedArgsAssignNode(int StartPosition, int EndPosition, StatementNode Left, 
         Token Symbol, ExpressionNode Right) 
     : StatementNode(StartPosition, EndPosition);
+public record TypedArgsListNode(int StartPosition, int EndPosition, Token? mulOp, StatementNode? mulNode, Token? tcMul,
+        Token? powerOp, StatementNode? powerNode, Token? tcPower, Token? slashOp, ImmutableArray<StatementNode> Nodes,
+        ImmutableArray<Token> Separators, ImmutableArray<Token> TypeComments) 
+    : StatementNode(StartPosition, EndPosition);
