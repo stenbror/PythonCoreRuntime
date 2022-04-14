@@ -322,3 +322,5 @@ public record FuncDefStatementNode(int StartPosition, int EndPosition, Token Sym
     : StatementNode(StartPosition, EndPosition);
 public record ParameterNode(int StartPosition, int EndPosition, Token Symbol1, StatementNode? Right, Token Symbol2) 
     : StatementNode(StartPosition, EndPosition);
+public record TFPDefNode(int StartPosition, int EndPosition, StatementNode Left, Token Symbol1, ExpressionNode Right) 
+    : StatementNode(StartPosition, EndPosition);

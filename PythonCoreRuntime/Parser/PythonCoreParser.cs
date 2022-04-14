@@ -2396,7 +2396,7 @@ _finally:
             throw new SyntaxError("Expecting '(' in 'def' statement!", _tokenizer.CurPosition);
         var symbol1 = _tokenizer.CurSymbol;
         _tokenizer.Advance();
-        var right = _tokenizer.CurSymbol.Code != TokenCode.PyRightParen ? ParseTypedArgs() : null;
+        var right = _tokenizer.CurSymbol.Code != TokenCode.PyRightParen ? ParseTypedArgsList() : null;
         if (_tokenizer.CurSymbol.Code != TokenCode.PyRightParen)
             throw new SyntaxError("Expecting ')' in 'def' statement!", _tokenizer.CurPosition);
         var symbol2 = _tokenizer.CurSymbol;
@@ -2405,10 +2405,41 @@ _finally:
         return new ParameterNode(start, _tokenizer.CurPosition, symbol1, right, symbol2);
     }
     
-    private StatementNode ParseTypedArgs()  
+    private StatementNode ParseTypedArgument()  
     {                                       
         throw new NotImplementedException();
-    }                                       
+    }     
+    
+    private StatementNode ParseTypedArgsList()  
+    {                                       
+        throw new NotImplementedException();
+    }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
+    private StatementNode ParseTFPDef()
+    {
+        var start = _tokenizer.CurPosition;
+        if (_tokenizer.CurSymbol.Code != TokenCode.Name)
+            throw new SyntaxError("Expecting Name literal in parameter!", _tokenizer.CurPosition);
+        var symbol1 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        var left = new NameLiteralStatementNode(start, _tokenizer.CurPosition, symbol1);
+
+        if (_tokenizer.CurSymbol.Code == TokenCode.PyColon)
+        {
+            var symbol2 = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+            var right = ParseTest(true);
+
+            return new TFPDefNode(start, _tokenizer.CurPosition, left, symbol2, right);
+        }
+        
+        return left;
+    }     
     
     private StatementNode ParseFuncSuiteStatement()  
    
