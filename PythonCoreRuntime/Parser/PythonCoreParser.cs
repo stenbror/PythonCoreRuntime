@@ -16,9 +16,6 @@ public class PythonCoreParser
         _tokenizer = tokenizer;
     }
     
-    
-    
-    
     #region Expression rules
     
     /// <summary>
