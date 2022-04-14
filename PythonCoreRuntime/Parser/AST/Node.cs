@@ -331,3 +331,6 @@ public record TypedArgsListNode(int StartPosition, int EndPosition, Token? mulOp
         Token? powerOp, StatementNode? powerNode, Token? tcPower, Token? slashOp, ImmutableArray<StatementNode> Nodes,
         ImmutableArray<Token> Separators, ImmutableArray<Token> TypeComments) 
     : StatementNode(StartPosition, EndPosition);
+public record FuncSuiteStatementNode(int StartPosition, int EndPosition, Token Symbol1, Token? TypeComment, 
+        Token? Symbol2, Token Symbol3, ImmutableArray<StatementNode> Nodes, Token Symbol4) 
+    : StatementNode(StartPosition, EndPosition);

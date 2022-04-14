@@ -2653,12 +2653,47 @@ _finally:
         return left;
     }     
     
-    private StatementNode ParseFuncSuiteStatement()  
-   
-    {                                       
-   
-        throw new NotImplementedException();
-   }                                       
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
+    private StatementNode ParseFuncSuiteStatement()
+    {
+        if (_tokenizer.CurSymbol.Code == TokenCode.Newline)
+        {
+            var start = _tokenizer.CurPosition;
+            var symbol1 = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+            Token? tc = null, symbol2 = null;
+
+            if (_tokenizer.CurSymbol.Code == TokenCode.TypeComment)
+            {
+                tc = _tokenizer.CurSymbol;
+                _tokenizer.Advance();
+                if (_tokenizer.CurSymbol.Code != TokenCode.Newline)
+                    throw new SyntaxError("Expecting Newline after Type Comment!", _tokenizer.CurPosition);
+                symbol2 = _tokenizer.CurSymbol;
+                _tokenizer.Advance();
+            }
+
+            if (_tokenizer.CurSymbol.Code != TokenCode.Indent)
+                throw new SyntaxError("Expecting Indent in code block!", _tokenizer.CurPosition);
+            var symbol3 = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+
+            var nodes = new List<StatementNode>();
+            nodes.Add(ParseStmt());
+            while (_tokenizer.CurSymbol.Code != TokenCode.Dedent) nodes.Add(ParseStmt());
+            var symbol4 = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+
+            return new FuncSuiteStatementNode(start, _tokenizer.CurPosition, symbol1, tc, symbol2, 
+                symbol3, nodes.ToImmutableArray(), symbol4);
+        }
+
+        return ParseSimpleStmt();
+    }                                       
     
     /// <summary>
     /// 
