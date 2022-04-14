@@ -324,3 +324,6 @@ public record ParameterNode(int StartPosition, int EndPosition, Token Symbol1, S
     : StatementNode(StartPosition, EndPosition);
 public record TFPDefNode(int StartPosition, int EndPosition, StatementNode Left, Token Symbol1, ExpressionNode Right) 
     : StatementNode(StartPosition, EndPosition);
+public record TypedArgsAssignNode(int StartPosition, int EndPosition, StatementNode Left, 
+        Token Symbol, ExpressionNode Right) 
+    : StatementNode(StartPosition, EndPosition);

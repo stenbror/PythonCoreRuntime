@@ -2405,9 +2405,24 @@ _finally:
         return new ParameterNode(start, _tokenizer.CurPosition, symbol1, right, symbol2);
     }
     
-    private StatementNode ParseTypedArgument()  
-    {                                       
-        throw new NotImplementedException();
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    private StatementNode ParseTypedArgument()
+    {
+        var start = _tokenizer.CurPosition;
+        var left = ParseTFPDef();
+        if (_tokenizer.CurSymbol.Code == TokenCode.PyAssign)
+        {
+            var symbol = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+            var right = ParseTest(true);
+
+            return new TypedArgsAssignNode(start, _tokenizer.CurPosition, left, symbol, right);
+        }
+
+        return left;
     }     
     
     private StatementNode ParseTypedArgsList()  
