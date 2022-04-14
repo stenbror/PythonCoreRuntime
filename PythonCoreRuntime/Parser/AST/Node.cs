@@ -337,3 +337,6 @@ public record FuncSuiteStatementNode(int StartPosition, int EndPosition, Token S
 public record FuncTypeNode(int StartPosition, int EndPosition, Token Symbol1, StatementNode? Left, Token Symbol2, 
         Token Symbol3, ExpressionNode Right) 
     : StatementNode(StartPosition, EndPosition);
+public record TypedListNode(int StartPosition, int EndPosition, Token? Symbol1, ExpressionNode? Left,
+        Token? Symbol2, ExpressionNode? Right, ImmutableArray<ExpressionNode> Nodes, ImmutableArray<Token> Separators) 
+    : StatementNode(StartPosition, EndPosition);

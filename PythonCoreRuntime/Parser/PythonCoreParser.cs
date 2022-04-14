@@ -2891,9 +2891,112 @@ _finally:
         return new FuncTypeNode(start, _tokenizer.CurPosition, symbol1, left, symbol2, symbol3, right);
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
     private StatementNode ParseTypedList()
     {
-        throw new NotImplementedException();
+        var start = _tokenizer.CurPosition;
+        Token? mulOp = null, powerOp = null;
+        ExpressionNode? left = null, right = null;
+        var nodes = new List<ExpressionNode>();
+        var separators = new List<Token>();
+
+        switch (_tokenizer.CurSymbol.Code)
+        {
+            case TokenCode.PyPower:
+                powerOp = _tokenizer.CurSymbol;
+                _tokenizer.Advance();
+                right = ParseTest(true);
+                break;
+            case TokenCode.PyMul:
+                mulOp = _tokenizer.CurSymbol;
+                _tokenizer.Advance();
+                left = ParseTest(true);
+                while (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+                {
+                    separators.Add(_tokenizer.CurSymbol);
+                    _tokenizer.Advance();
+                    if (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+                        throw new SyntaxError("Unexpected ',' in type list!", _tokenizer.CurPosition);
+                    if (_tokenizer.CurSymbol.Code == TokenCode.Newline ||
+                        _tokenizer.CurSymbol.Code == TokenCode.Eof) break;
+                    if (_tokenizer.CurSymbol.Code == TokenCode.PyPower)
+                    {
+                        powerOp = _tokenizer.CurSymbol;
+                        _tokenizer.Advance();
+                        right = ParseTest(true);
+                        break;
+                    }
+                    nodes.Add(ParseTest(true));
+                }
+                break;
+            default:
+            {
+                nodes.Add(ParseTest(true));
+
+                while (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+                {
+                    separators.Add(_tokenizer.CurSymbol);
+                    _tokenizer.Advance();
+                    if (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+                        throw new SyntaxError("Unexpected ',' in type list!", _tokenizer.CurPosition);
+                    if (_tokenizer.CurSymbol.Code == TokenCode.Newline ||
+                        _tokenizer.CurSymbol.Code == TokenCode.Eof) break;
+                    if (_tokenizer.CurSymbol.Code == TokenCode.PyPower)
+                    {
+                        powerOp = _tokenizer.CurSymbol;
+                        _tokenizer.Advance();
+                        right = ParseTest(true);
+                        break;
+                    }
+                    
+                    if (_tokenizer.CurSymbol.Code == TokenCode.PyMul)
+                    {
+                        mulOp = _tokenizer.CurSymbol;
+                        _tokenizer.Advance();
+                        left = ParseTest(true);
+                        
+                        while (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+                        {
+                            separators.Add(_tokenizer.CurSymbol);
+                            _tokenizer.Advance();
+                            
+                            if (_tokenizer.CurSymbol.Code == TokenCode.PyComma)
+                                throw new SyntaxError("Unexpected ',' in type list!", _tokenizer.CurPosition);
+                            if (_tokenizer.CurSymbol.Code == TokenCode.Newline ||
+                                _tokenizer.CurSymbol.Code == TokenCode.Eof) goto _finished;
+                            if (_tokenizer.CurSymbol.Code == TokenCode.PyPower)
+                            {
+                                powerOp = _tokenizer.CurSymbol;
+                                _tokenizer.Advance();
+                                right = ParseTest(true);
+                                goto _finished;
+                            }
+                            
+                            nodes.Add(ParseTest(true));
+                        }
+                    }
+                    
+                    nodes.Add(ParseTest(true));
+                }
+                break;
+            }
+        }
+        
+        _finished:
+        
+        return new TypedListNode(
+            start,
+            _tokenizer.CurPosition,
+            mulOp,
+            left,
+            powerOp,
+            right,
+            nodes.ToImmutableArray(),
+            separators.ToImmutableArray() );
     }
     
     #endregion
