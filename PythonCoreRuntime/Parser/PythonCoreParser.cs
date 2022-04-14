@@ -2344,10 +2344,55 @@ _finally:
         return new AsyncFuncDefStatementNode(start, _tokenizer.CurPosition, symbol1, right);
     }                                             
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SyntaxError"></exception>
     private StatementNode ParseFuncDefStatement()
+    {
+        var start = _tokenizer.CurPosition;
+        var symbol1 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        if (_tokenizer.CurSymbol.Code != TokenCode.Name)
+            throw new SyntaxError("Expecting Name of 'def' statement!", _tokenizer.CurPosition);
+        var symbol2 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        var para = ParseParameter();
+        Token? symbol3 = null;
+        ExpressionNode? left = null;
+        if (_tokenizer.CurSymbol.Code == TokenCode.PyArrow)
+        {
+            symbol3 = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+            left = ParseTest(true);
+        }
+
+        if (_tokenizer.CurSymbol.Code != TokenCode.PyColon)
+            throw new SyntaxError("Expecting ':' in 'def' statement!", _tokenizer.CurPosition);
+        var symbol4 = _tokenizer.CurSymbol;
+        _tokenizer.Advance();
+        Token? tc = null;
+        if (_tokenizer.CurSymbol.Code == TokenCode.TypeComment)
+        {
+            tc = _tokenizer.CurSymbol;
+            _tokenizer.Advance();
+        }
+
+        var right = ParseFuncSuiteStatement();
+        return new FuncDefStatementNode(start, _tokenizer.CurPosition, symbol1, symbol2, para, symbol3, 
+            left, symbol4, tc, right);
+    }
+
+    private StatementNode ParseParameter()
     {
         throw new NotImplementedException();
     }
+    
+    private StatementNode ParseFuncSuiteStatement()  
+    {                                       
+        throw new NotImplementedException();
+    }                                       
     
     /// <summary>
     /// 
