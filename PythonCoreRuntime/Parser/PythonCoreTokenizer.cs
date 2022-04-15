@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Text;
 using Microsoft.CodeAnalysis;
 
 
@@ -300,20 +301,88 @@ public class PythonCoreTokenizer : IPythonCoreTokenizer
                 res = new Optional<Token>(new Token(CurPosition, _index, 
                     TokenCode.PyRightCurly, trivias));
                 break;
-            default:
-                _index--;
-                CurPosition = _index;
-                break;
         }
         
         return res;
     }
 
+    /// <summary>
+    ///     Handle reserved keywords, name literal or prefix to string.
+    /// </summary>
+    /// <param name="ch"></param>
+    /// <param name="trivias"></param>
+    /// <returns></returns>
+    private Optional<Token> ReservedKeywordOrNameLiteral(char ch, ImmutableArray<Trivia> trivias)
+    {
+        if (Char.IsLetter(ch))
+        {
+            var buffer = new StringBuilder().Append(ch);
+            var c = GetChar();
+            while (Char.IsLetterOrDigit(c))
+            {
+                buffer.Append(c);
+                c = GetChar();
+            }
 
-       
-    
-    
-    
+            if (_keywords.ContainsKey(buffer.ToString()))
+            {
+                return new Optional<Token>(new Token(CurPosition, _index, 
+                    _keywords[buffer.ToString()], trivias));
+            }
+
+            if (buffer.Length <= 2 && c == '\'' || c == '"')
+            {
+                switch (buffer.ToString())
+                {
+                    case "r":
+                    case "u":
+                    case "R":
+                    case "U":
+                    case "f":
+                    case "F":
+                    case "fr":
+                    case "Fr":
+                    case "fR":
+                    case "FR":
+                    case "rf":
+                    case "rF":
+                    case "Rf":
+                    case "RF":
+                        return StringHandling(c, trivias);
+                }
+            }
+
+            return new Optional<Token>(new NameToken(CurPosition, _index,
+                buffer.ToString(), trivias));
+        }
+
+        return default;
+    }
+
+    /// <summary>
+    ///     Handle strings in Python. Single and tripple quoted.
+    /// </summary>
+    /// <param name="c"></param>
+    /// <param name="trivias"></param>
+    /// <returns></returns>
+    private Optional<Token> StringHandling(char c, ImmutableArray<Trivia> trivias)
+    {
+        return default;
+    }
+
+
+
+    private char GetChar()
+    {
+        return ' ';
+    }
+
+    private char PeekChar(int position = 0)
+    {
+        return ' ';
+    }
+
+
     /// <summary>
     ///     Get next valid token into CurSymbol and start of it into CurPosition!
     /// </summary>
