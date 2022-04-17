@@ -90,7 +90,7 @@ public class PythonCoreParser
                 _tokenizer.Advance();
                 var right = _tokenizer.CurSymbol.Code == TokenCode.PyRightCurly ? null :
                     ParseDictorSetMaker();
-                if (_tokenizer.CurSymbol.Code != TokenCode.PyRightBracket)
+                if (_tokenizer.CurSymbol.Code != TokenCode.PyRightCurly)
                 {
                     throw right is DictionaryContainerExpressionNode || right == null
                         ? new SyntaxError("Expecting '}' in dictionary!", _tokenizer.CurPosition)
