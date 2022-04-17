@@ -480,6 +480,57 @@ public class TestExpressionRules
         Assert.Equal(TokenCode.Eof, 
             (res as EvalInputStatementNode).Eof.Code);
     }
+    
+    /// <summary>
+    ///     Test for a[1]
+    /// </summary>
+    [Fact]
+    public void TestAtomExprRuleWithIndexingSingleValue()
+    {
+        var tokens = new List<Token>()
+        {
+            new NameToken(0, 1, "a", ImmutableArray<Trivia>.Empty),
+            new Token(1, 2, TokenCode.PyLeftBracket, ImmutableArray<Trivia>.Empty),
+            new NumberToken(2, 3, "1", new ImmutableArray<Trivia>()),
+            new Token(3, 4, TokenCode.PyRightBracket, ImmutableArray<Trivia>.Empty),
+            new Token(4, 4, TokenCode.Eof, ImmutableArray<Trivia>.Empty)
+        };
+        
+        var parser = new PythonCoreParser(new MockPythonCoreTokenizer(tokens.ToImmutableArray()));
+        var res = parser.ParseEvalInput();
+        
+        Assert.Equal(0, res.StartPosition);
+        Assert.Equal(4, res.EndPosition);
+        
+        Assert.True( ((res as EvalInputStatementNode).Right as AtomExpressionNode).Trailers.Length == 1);
+        
+        var element1 = (((res as EvalInputStatementNode).Right as AtomExpressionNode).Trailers[0] as IndexExpressionNode);
+        Assert.Equal(TokenCode.PyLeftBracket, element1.Symbol1.Code);
+
+        var subscript1 = element1.Right as SubscriptExpressionNode;
+        var number = subscript1.Left as NumberExpressionNode;
+        Assert.Equal("1", (number.Symbol as NumberToken).Value);
+        Assert.Null(subscript1.Right);
+        Assert.Null(subscript1.Next);
+        
+        Assert.Equal(TokenCode.PyRightBracket, element1.Symbol2.Code);
+        Assert.Equal(1, element1.StartPosition);
+        Assert.Equal(4, element1.EndPosition);
+        
+        Assert.Equal(0, 
+            ((res as EvalInputStatementNode).Right as AtomExpressionNode).StartPosition);
+        Assert.Equal(4, 
+            ((res as EvalInputStatementNode).Right as AtomExpressionNode).EndPosition);
+        
+        Assert.Equal(TokenCode.Name,
+            (((res as EvalInputStatementNode).Right as AtomExpressionNode).Right as NameExpressionNode).Symbol.Code );
+        Assert.Equal("a",
+            ((((res as EvalInputStatementNode).Right as AtomExpressionNode).Right as NameExpressionNode).Symbol as NameToken).Value );
+        
+        Assert.True((res as EvalInputStatementNode).Newlines.IsEmpty);
+        Assert.Equal(TokenCode.Eof, 
+            (res as EvalInputStatementNode).Eof.Code);
+    }
 }
 
 #pragma warning restore CS8602

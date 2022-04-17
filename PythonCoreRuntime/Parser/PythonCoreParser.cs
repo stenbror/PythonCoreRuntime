@@ -671,7 +671,7 @@ public class PythonCoreParser
             case TokenCode.PyLeftBracket:
             {
                 _tokenizer.Advance();
-                var right = _tokenizer.CurSymbol.Code == TokenCode.PyRightParen ? null : ParseSubscriptList();
+                var right = ParseSubscriptList();
                 if (_tokenizer.CurSymbol.Code != TokenCode.PyRightBracket)
                     throw new SyntaxError("Expecting ']' in index!", _tokenizer.CurPosition);
                 var symbol2 = _tokenizer.CurSymbol;
