@@ -119,7 +119,7 @@ public class PythonCoreParser
         var start = _tokenizer.CurPosition;
         var symbol = _tokenizer.CurSymbol.Code == TokenCode.PyAwait ? _tokenizer.CurSymbol : null;
         if (symbol != null) _tokenizer.Advance();
-        var left = ParseAtom();
+        var right = ParseAtom();
 
         if (_tokenizer.CurSymbol.Code == TokenCode.PyDot ||
             _tokenizer.CurSymbol.Code == TokenCode.PyLeftParen ||
@@ -133,12 +133,12 @@ public class PythonCoreParser
                 elements.Add(ParseTrailer());
             }
 
-            return new AtomExpressionNode(start, _tokenizer.CurPosition, symbol, left, elements.ToImmutableArray());
+            return new AtomExpressionNode(start, _tokenizer.CurPosition, symbol, right, elements.ToImmutableArray());
         }
 
         return symbol == null
-            ? left
-            : new AtomExpressionNode(start, _tokenizer.CurPosition, symbol, left, ImmutableArray<ExpressionNode>.Empty);
+            ? right
+            : new AtomExpressionNode(start, _tokenizer.CurPosition, symbol, right, ImmutableArray<ExpressionNode>.Empty);
     }
 
     /// <summary>

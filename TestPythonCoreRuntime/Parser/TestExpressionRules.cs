@@ -396,6 +396,43 @@ public class TestExpressionRules
         Assert.Equal(TokenCode.Eof, 
             (res as EvalInputStatementNode).Eof.Code);
     }
+    
+    /// <summary>
+    ///     Test for await a
+    /// </summary>
+    [Fact]
+    public void TestAtomExprRuleWithAwait()
+    {
+        var tokens = new List<Token>()
+        {
+            new Token(0, 6, TokenCode.PyAwait, ImmutableArray<Trivia>.Empty),
+            new NameToken(6, 7, "a", ImmutableArray<Trivia>.Empty),
+            new Token(7, 7, TokenCode.Eof, ImmutableArray<Trivia>.Empty)
+        };
+        
+        var parser = new PythonCoreParser(new MockPythonCoreTokenizer(tokens.ToImmutableArray()));
+        var res = parser.ParseEvalInput();
+        
+        Assert.Equal(0, res.StartPosition);
+        Assert.Equal(7, res.EndPosition);
+        
+        Assert.Equal(TokenCode.PyAwait, 
+            ((res as EvalInputStatementNode).Right as AtomExpressionNode).Await.Code);
+        
+        Assert.Equal(0, 
+            ((res as EvalInputStatementNode).Right as AtomExpressionNode).StartPosition);
+        Assert.Equal(7, 
+            ((res as EvalInputStatementNode).Right as AtomExpressionNode).EndPosition);
+        
+        Assert.Equal(TokenCode.Name,
+            (((res as EvalInputStatementNode).Right as AtomExpressionNode).Right as NameExpressionNode).Symbol.Code );
+        Assert.Equal("a",
+            ((((res as EvalInputStatementNode).Right as AtomExpressionNode).Right as NameExpressionNode).Symbol as NameToken).Value );
+        
+        Assert.True((res as EvalInputStatementNode).Newlines.IsEmpty);
+        Assert.Equal(TokenCode.Eof, 
+            (res as EvalInputStatementNode).Eof.Code);
+    }
 }
 
 #pragma warning restore CS8602

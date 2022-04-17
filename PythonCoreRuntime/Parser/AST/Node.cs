@@ -13,7 +13,7 @@ public record NameExpressionNode(int StartPosition, int EndPosition, Token Symbo
 public record NumberExpressionNode(int StartPosition, int EndPosition, Token Symbol) : ExpressionNode(StartPosition, EndPosition);
 public record StringExpressionNode(int StartPosition, int EndPosition, ImmutableArray<Token> Symbols) : ExpressionNode(StartPosition, EndPosition);
 
-public record AtomExpressionNode(int StartPosition, int EndPosition, Token? Await, ExpressionNode Left, ImmutableArray<ExpressionNode> Trailers) 
+public record AtomExpressionNode(int StartPosition, int EndPosition, Token? Await, ExpressionNode Right, ImmutableArray<ExpressionNode> Trailers) 
     : ExpressionNode(StartPosition, EndPosition);
 public record PowerExpressionNode(int StartPosition, int EndPosition, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
     : ExpressionNode(StartPosition, EndPosition);
