@@ -433,6 +433,53 @@ public class TestExpressionRules
         Assert.Equal(TokenCode.Eof, 
             (res as EvalInputStatementNode).Eof.Code);
     }
+    
+    /// <summary>
+    ///     Test for await a()
+    /// </summary>
+    [Fact]
+    public void TestAtomExprRuleWithAwaitFunctionCall()
+    {
+        var tokens = new List<Token>()
+        {
+            new Token(0, 6, TokenCode.PyAwait, ImmutableArray<Trivia>.Empty),
+            new NameToken(6, 7, "a", ImmutableArray<Trivia>.Empty),
+            new Token(7, 8, TokenCode.PyLeftParen, ImmutableArray<Trivia>.Empty),
+            new Token(8, 9, TokenCode.PyRightParen, ImmutableArray<Trivia>.Empty),
+            new Token(9, 9, TokenCode.Eof, ImmutableArray<Trivia>.Empty)
+        };
+        
+        var parser = new PythonCoreParser(new MockPythonCoreTokenizer(tokens.ToImmutableArray()));
+        var res = parser.ParseEvalInput();
+        
+        Assert.Equal(0, res.StartPosition);
+        Assert.Equal(9, res.EndPosition);
+        
+        Assert.Equal(TokenCode.PyAwait, 
+            ((res as EvalInputStatementNode).Right as AtomExpressionNode).Await.Code);
+        Assert.True( ((res as EvalInputStatementNode).Right as AtomExpressionNode).Trailers.Length == 1);
+        
+        var element1 = (((res as EvalInputStatementNode).Right as AtomExpressionNode).Trailers[0] as CallExpressionNode);
+        Assert.Equal(TokenCode.PyLeftParen, element1.Symbol1.Code);
+        Assert.Null(element1.Right);
+        Assert.Equal(TokenCode.PyRightParen, element1.Symbol2.Code);
+        Assert.Equal(7, element1.StartPosition);
+        Assert.Equal(9, element1.EndPosition);
+        
+        Assert.Equal(0, 
+            ((res as EvalInputStatementNode).Right as AtomExpressionNode).StartPosition);
+        Assert.Equal(9, 
+            ((res as EvalInputStatementNode).Right as AtomExpressionNode).EndPosition);
+        
+        Assert.Equal(TokenCode.Name,
+            (((res as EvalInputStatementNode).Right as AtomExpressionNode).Right as NameExpressionNode).Symbol.Code );
+        Assert.Equal("a",
+            ((((res as EvalInputStatementNode).Right as AtomExpressionNode).Right as NameExpressionNode).Symbol as NameToken).Value );
+        
+        Assert.True((res as EvalInputStatementNode).Newlines.IsEmpty);
+        Assert.Equal(TokenCode.Eof, 
+            (res as EvalInputStatementNode).Eof.Code);
+    }
 }
 
 #pragma warning restore CS8602
