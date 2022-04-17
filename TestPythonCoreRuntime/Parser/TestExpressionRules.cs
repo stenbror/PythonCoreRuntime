@@ -326,6 +326,41 @@ public class TestExpressionRules
         Assert.Equal(TokenCode.Eof, 
             (res as EvalInputStatementNode).Eof.Code);
     }
+    
+    /// <summary>
+    ///     Test for empty list
+    /// </summary>
+    [Fact]
+    public void TestAtomRuleWithEmptyList()
+    {
+        var tokens = new List<Token>()
+        {
+            new Token(0, 1, TokenCode.PyLeftBracket, ImmutableArray<Trivia>.Empty),
+            new Token(2, 3, TokenCode.PyRightBracket, ImmutableArray<Trivia>.Empty),
+            new Token(4, 4, TokenCode.Eof, ImmutableArray<Trivia>.Empty)
+        };
+        
+        var parser = new PythonCoreParser(new MockPythonCoreTokenizer(tokens.ToImmutableArray()));
+        var res = parser.ParseEvalInput();
+        
+        Assert.Equal(0, res.StartPosition);
+        Assert.Equal(4, res.EndPosition);
+        
+        Assert.Equal(TokenCode.PyLeftBracket, 
+            ((res as EvalInputStatementNode).Right as ListExpressionNode).Symbol1.Code);
+        
+        Assert.Null(((res as EvalInputStatementNode).Right as ListExpressionNode).Right);
+        
+        Assert.Equal(TokenCode.PyRightBracket, 
+            ((res as EvalInputStatementNode).Right as ListExpressionNode).Symbol2.Code);
+        
+        Assert.Equal(0, ((res as EvalInputStatementNode).Right as ListExpressionNode).StartPosition);
+        Assert.Equal(4, ((res as EvalInputStatementNode).Right as ListExpressionNode).EndPosition);
+        
+        Assert.True((res as EvalInputStatementNode).Newlines.IsEmpty);
+        Assert.Equal(TokenCode.Eof, 
+            (res as EvalInputStatementNode).Eof.Code);
+    }
 }
 
 #pragma warning restore CS8602
