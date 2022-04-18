@@ -738,6 +738,41 @@ public class TestExpressionRules
         Assert.Equal(TokenCode.Eof, 
             (res as EvalInputStatementNode).Eof.Code);
     }
+    
+    /// <summary>
+    ///     Test for ~a
+
+    /// </summary>
+    [Fact]
+    public void TestUnaryBitInvertSingle()
+    {
+        var tokens = new List<Token>()
+        {
+            new Token(0, 1, TokenCode.PyBitInvert, ImmutableArray<Trivia>.Empty),
+            new NameToken(1, 2, "a", ImmutableArray<Trivia>.Empty),
+            new Token(2, 2, TokenCode.Eof, ImmutableArray<Trivia>.Empty)
+        };
+        
+        var parser = new PythonCoreParser(new MockPythonCoreTokenizer(tokens.ToImmutableArray()));
+        var res = parser.ParseEvalInput();
+        
+        Assert.Equal(0, res.StartPosition);
+        Assert.Equal(2, res.EndPosition);
+        
+        
+        var op = ((res as EvalInputStatementNode).Right as UnaryBitInvertExpressionNode);
+        Assert.Equal(0, op.StartPosition);
+        Assert.Equal(2, op.EndPosition);
+        Assert.Equal(TokenCode.PyBitInvert, op.Symbol.Code);
+
+        var right = (op.Right as NameExpressionNode);
+        Assert.Equal("a", (right.Symbol as NameToken).Value);
+
+        
+        Assert.True((res as EvalInputStatementNode).Newlines.IsEmpty);
+        Assert.Equal(TokenCode.Eof, 
+            (res as EvalInputStatementNode).Eof.Code);
+    }
 }
 
 #pragma warning restore CS8602
