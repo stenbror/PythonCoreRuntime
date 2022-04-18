@@ -773,6 +773,47 @@ public class TestExpressionRules
         Assert.Equal(TokenCode.Eof, 
             (res as EvalInputStatementNode).Eof.Code);
     }
+    
+    /// <summary>
+    ///     Test for --a
+    /// </summary>
+    [Fact]
+    public void TestUnaryMinusMultiple()
+    {
+        var tokens = new List<Token>()
+        {
+            new Token(0, 1, TokenCode.PyMinus, ImmutableArray<Trivia>.Empty),
+            new Token(1, 2, TokenCode.PyMinus, ImmutableArray<Trivia>.Empty),
+            new NameToken(2, 3, "a", ImmutableArray<Trivia>.Empty),
+            new Token(3, 3, TokenCode.Eof, ImmutableArray<Trivia>.Empty)
+        };
+        
+        var parser = new PythonCoreParser(new MockPythonCoreTokenizer(tokens.ToImmutableArray()));
+        var res = parser.ParseEvalInput();
+        
+        Assert.Equal(0, res.StartPosition);
+        Assert.Equal(3, res.EndPosition);
+        
+        
+        var op = ((res as EvalInputStatementNode).Right as UnaryMinusExpressionNode);
+        Assert.Equal(0, op.StartPosition);
+        Assert.Equal(3, op.EndPosition);
+        Assert.Equal(TokenCode.PyMinus, op.Symbol.Code);
+        
+        var op2 = (op.Right as UnaryMinusExpressionNode);
+        Assert.Equal(1, op2.StartPosition);
+        Assert.Equal(3, op2.EndPosition);
+        Assert.Equal(TokenCode.PyMinus, op2.Symbol.Code);
+        
+
+        var right = (op2.Right as NameExpressionNode);
+        Assert.Equal("a", (right.Symbol as NameToken).Value);
+
+        
+        Assert.True((res as EvalInputStatementNode).Newlines.IsEmpty);
+        Assert.Equal(TokenCode.Eof, 
+            (res as EvalInputStatementNode).Eof.Code);
+    }
 }
 
 #pragma warning restore CS8602
