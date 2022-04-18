@@ -622,6 +622,54 @@ public class TestExpressionRules
         Assert.Equal(TokenCode.Eof, 
             (res as EvalInputStatementNode).Eof.Code);
     }
+    
+    /// <summary>
+    ///     Test for a ** b ** c
+    /// </summary>
+    [Fact]
+    public void TestPowerOperatorMultiple()
+    {
+        var tokens = new List<Token>()
+        {
+            new NameToken(0, 1, "a", ImmutableArray<Trivia>.Empty),
+            new Token(2, 4, TokenCode.PyPower, ImmutableArray<Trivia>.Empty),
+            new NameToken(5, 6, "b", ImmutableArray<Trivia>.Empty),
+            new Token(7, 9, TokenCode.PyPower, ImmutableArray<Trivia>.Empty),
+            new NameToken(10, 11, "c", ImmutableArray<Trivia>.Empty),
+            new Token(11, 11, TokenCode.Eof, ImmutableArray<Trivia>.Empty)
+        };
+        
+        var parser = new PythonCoreParser(new MockPythonCoreTokenizer(tokens.ToImmutableArray()));
+        var res = parser.ParseEvalInput();
+        
+        Assert.Equal(0, res.StartPosition);
+        Assert.Equal(11, res.EndPosition);
+        
+        
+        var op1 = ((res as EvalInputStatementNode).Right as PowerExpressionNode);
+        Assert.Equal(0, op1.StartPosition);
+        Assert.Equal(11, op1.EndPosition);
+        Assert.Equal(TokenCode.PyPower, op1.Symbol.Code);
+        
+        var left = (op1.Left as NameExpressionNode);
+        Assert.Equal("a", (left.Symbol as NameToken).Value);
+
+        var op2 = (op1.Right as PowerExpressionNode);
+        Assert.Equal(5, op2.StartPosition);
+        Assert.Equal(11, op2.EndPosition);
+        Assert.Equal(TokenCode.PyPower, op2.Symbol.Code);
+        
+        var left2 = (op2.Left as NameExpressionNode);
+        Assert.Equal("b", (left2.Symbol as NameToken).Value);
+       
+        var right2 = (op2.Right as NameExpressionNode);
+        Assert.Equal("c", (right2.Symbol as NameToken).Value);
+        
+        
+        Assert.True((res as EvalInputStatementNode).Newlines.IsEmpty);
+        Assert.Equal(TokenCode.Eof, 
+            (res as EvalInputStatementNode).Eof.Code);
+    }
 }
 
 #pragma warning restore CS8602
