@@ -854,7 +854,7 @@ public class TestExpressionRules
     }
     
     /// <summary>
-    ///     Test for a * b
+    ///     Test for a / b
     /// </summary>
     [Fact]
     public void TestTermDivOperatorSingle()
@@ -878,6 +878,44 @@ public class TestExpressionRules
         Assert.Equal(0, op.StartPosition);
         Assert.Equal(5, op.EndPosition);
         Assert.Equal(TokenCode.PyDiv, op.Symbol.Code);
+
+        var left = (op.Left as NameExpressionNode);
+        Assert.Equal("a", (left.Symbol as NameToken).Value);
+
+        var right = (op.Right as NameExpressionNode);
+        Assert.Equal("b", (right.Symbol as NameToken).Value);
+        
+        
+        Assert.True((res as EvalInputStatementNode).Newlines.IsEmpty);
+        Assert.Equal(TokenCode.Eof, 
+            (res as EvalInputStatementNode).Eof.Code);
+    }
+    
+    /// <summary>
+    ///     Test for a % b
+    /// </summary>
+    [Fact]
+    public void TestTermModuloOperatorSingle()
+    {
+        var tokens = new List<Token>()
+        {
+            new NameToken(0, 1, "a", ImmutableArray<Trivia>.Empty),
+            new Token(2, 3, TokenCode.PyModulo, ImmutableArray<Trivia>.Empty),
+            new NameToken(4, 5, "b", ImmutableArray<Trivia>.Empty),
+            new Token(5, 5, TokenCode.Eof, ImmutableArray<Trivia>.Empty)
+        };
+        
+        var parser = new PythonCoreParser(new MockPythonCoreTokenizer(tokens.ToImmutableArray()));
+        var res = parser.ParseEvalInput();
+        
+        Assert.Equal(0, res.StartPosition);
+        Assert.Equal(5, res.EndPosition);
+        
+        
+        var op = ((res as EvalInputStatementNode).Right as ModuloExpressionNode);
+        Assert.Equal(0, op.StartPosition);
+        Assert.Equal(5, op.EndPosition);
+        Assert.Equal(TokenCode.PyModulo, op.Symbol.Code);
 
         var left = (op.Left as NameExpressionNode);
         Assert.Equal("a", (left.Symbol as NameToken).Value);
